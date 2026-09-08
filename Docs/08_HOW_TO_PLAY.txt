@@ -1,0 +1,123 @@
+================================================================================
+HOW TO PLAY — FELINITY
+================================================================================
+Last updated: after Inventory system (prompt 5) + Docs folder setup
+
+Open the MainWorld scene (Assets/Scenes/MainWorld.unity) and press Play.
+
+--------------------------------------------------------------------------------
+GOAL (FOR NOW)
+--------------------------------------------------------------------------------
+Explore a small top-down map as a cat. Scratch posts for CatCoins, forage for
+items, complete quests, and get home before midnight when night falls.
+
+There is no win/lose screen yet — systems are playable prototypes with text UI.
+
+--------------------------------------------------------------------------------
+CONTROLS
+--------------------------------------------------------------------------------
+Move                 WASD  or  Arrow keys  (8 directions; diagonals are normalized)
+Interact             E  or  Left mouse click
+                     (uses the closest interactable inside your range)
+
+When something is in range, a prompt appears above you:
+
+  [E] Scratch
+  [E] Forage
+
+--------------------------------------------------------------------------------
+ON-SCREEN UI
+--------------------------------------------------------------------------------
+Top-left
+  CatCoins: X              Your currency
+  Quests:                  Active quest list (e.g. First Scratch: 0/3)
+
+Top-right
+  Clock                    In-game time as H:MM AM/PM
+
+Top-center (night only, if far from home)
+  "Head home before midnight!"   (pulses / blinks)
+
+Bottom-left
+  Inventory:               Items you are holding (e.g. Catnip x2)
+
+Above player (when near an interactable)
+  [E] <action name>
+
+--------------------------------------------------------------------------------
+WHAT YOU CAN DO
+--------------------------------------------------------------------------------
+1) MOVE AROUND
+   You are the white square (placeholder cat). Camera follows smoothly.
+
+2) SCRATCH THE ORANGE POST ("ScratchPost")
+   - Walk up until you see [E] Scratch
+   - Press E / click
+   - Gain +2 CatCoins each scratch
+   - Progresses the "First Scratch" quest (need 3 scratches)
+
+3) FORAGE THE GREEN PATCH ("ForagePatch")
+   - Walk up until you see [E] Forage
+   - Press E / click
+   - Receive one random item: Catnip, Wild Berry, or Feather
+   - Patch disappears and respawns after 30 seconds
+   - Inventory panel updates live
+
+4) WATCH THE DAY / NIGHT CYCLE
+   - Time starts around 8:00 AM and advances (default: 1 real second = 1 game minute)
+   - Lighting shifts: warm midday → orange dusk/dawn → dim blue night
+   - Daytime is roughly 6:00 AM – 7:00 PM; night is after that
+
+5) RESPECT CURFEW AT NIGHT
+   - Home is the brown square "CatTree" (tagged Home)
+   - At night, if you stray farther than ~3 units from CatTree, the warning appears
+   - At midnight (0:00), if you are still too far, the screen fades to black,
+     you are returned to CatTree ("you dozed off"), then the fade clears
+
+6) COMPLETE QUESTS
+   - Default active quest: First Scratch — scratch the post 3 times
+   - On completion: quest log shows (Done), you gain +10 CatCoins,
+     console logs a completion message
+
+--------------------------------------------------------------------------------
+MAP LANDMARKS (PLACEHOLDERS)
+--------------------------------------------------------------------------------
+Player spawn          near (0, 0)
+CatTree (home)        brown square near spawn
+ScratchPost           orange square
+ForagePatch           green square
+Ground / Collision    empty tilemap layers (paint tiles later)
+
+--------------------------------------------------------------------------------
+TIPS FOR TESTING SYSTEMS QUICKLY
+--------------------------------------------------------------------------------
+• Speed up the day: select DayNightCycle → raise minutesPerRealSecond (e.g. 30–60)
+• Start near night: DayNightCycle → startHour ≈ 18.5
+• Forage again sooner: ForagePatch → lower respawnSeconds
+• See all defaults: Docs/02_DEFAULT_SETTINGS.txt
+
+--------------------------------------------------------------------------------
+NOT IN THE GAME YET
+--------------------------------------------------------------------------------
+• Real cat / world art and animations
+• Sound / music
+• Save / load
+• Pause menu
+• Combat, dialogue trees, multiple maps
+• Turning in quests to an NPC (quests auto-complete when targets are met)
+
+See Docs/07_NEXT_STEPS.txt for the planned roadmap.
+
+--------------------------------------------------------------------------------
+MAINTENANCE NOTE (FOR FUTURE PROMPTS)
+--------------------------------------------------------------------------------
+Whenever new playable features are added, UPDATE THIS FILE:
+  - Controls
+  - UI elements
+  - What you can do
+  - Landmarks
+  - "Last updated" line at the top
+
+Also bump the link/description in Docs/00_INDEX.txt if needed.
+
+================================================================================

@@ -1,0 +1,50 @@
+================================================================================
+06 — ADDING NEW INTERACTABLES
+================================================================================
+
+--------------------------------------------------------------------------------
+A. INTERFACE CONTRACT
+--------------------------------------------------------------------------------
+Implement IInteractable (Scripts/Systems/IInteractable.cs):
+
+  string GetInteractionPrompt();          // e.g. "Nap", "Talk"
+  void Interact(GameObject interactor);   // do the effect
+  bool CanInteract(GameObject interactor); // default true; use for cooldowns
+
+Player finds the closest CanInteract==true target inside InteractionRange
+and shows:  [E] <prompt>
+
+--------------------------------------------------------------------------------
+B. QUICK RECIPE — NEW WORLD OBJECT
+--------------------------------------------------------------------------------
+1. Create empty GameObject (or duplicate ScratchPost)
+2. Add SpriteRenderer (placeholder or real sprite)
+3. Add CircleCollider2D → Is Trigger = true (so InteractionRange detects it)
+4. Add your new MonoBehaviour that implements IInteractable
+5. Optional: child TextMeshPro world label with the object name
+6. Optional: Save as Prefab under Assets/Prefabs/Interactables/
+
+--------------------------------------------------------------------------------
+C. HOOK INTO EXISTING SYSTEMS FROM INTERACT()
+--------------------------------------------------------------------------------
+Grant coins:     CatCoins.Add(5);
+Add item:        InventorySystem.Instance.AddItem(itemData);
+Quest scratch:   QuestManager.Instance.ReportScratch();
+Quest forage:    QuestManager.Instance.ReportForage();
+Quest item:      QuestManager.Instance.ReportItemCollected(itemData);
+Custom objective: extend ObjectiveType + QuestManager (see 07_NEXT_STEPS.txt)
+
+--------------------------------------------------------------------------------
+D. EXISTING EXAMPLES TO COPY
+--------------------------------------------------------------------------------
+ScratchPost.cs   Simple instant reward + quest report
+ForagePatch.cs   Cooldown/respawn pattern + inventory drop table
+
+--------------------------------------------------------------------------------
+E. INTERACTION TUNING
+--------------------------------------------------------------------------------
+PlayerController.interactionRadius — grow/shrink detection bubble
+InteractionPromptUI.worldOffset    — move "[E]" label above head
+Prompt text comes from GetInteractionPrompt() — change in your script
+
+================================================================================

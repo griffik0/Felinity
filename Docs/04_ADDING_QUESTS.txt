@@ -1,0 +1,86 @@
+================================================================================
+04 — ADDING / EDITING QUESTS
+================================================================================
+
+--------------------------------------------------------------------------------
+A. CREATE A NEW QUEST ASSET
+--------------------------------------------------------------------------------
+1. Project window → right-click in Assets/Quests/ (or any folder)
+2. Create → Quests → New Quest
+3. Name the asset clearly (e.g. CollectCatnip.asset)
+4. Fill Inspector fields:
+
+     questName        Display name in quest log
+     description      Designer notes / future UI flavor text
+     objectiveType    See table below
+     targetAmount     How many to reach
+     catCoinReward    Granted once on completion via CatCoins.Add
+     requiredItem     ONLY for ItemCollected — drag an ItemData asset here
+
+--------------------------------------------------------------------------------
+B. OBJECTIVE TYPES
+--------------------------------------------------------------------------------
+ScratchCount     Incremented by ScratchPost → QuestManager.ReportScratch()
+ForageCount      Incremented by ForagePatch → QuestManager.ReportForage()
+CatCoinTotal     Tracks CatCoins.CatCoinBalance (total held, not earned)
+ItemCollected    Tracks count of requiredItem in InventorySystem
+                 (also ReportItemCollected from ForagePatch)
+
+--------------------------------------------------------------------------------
+C. ACTIVATE A QUEST IN THE SCENE
+--------------------------------------------------------------------------------
+1. Open MainWorld
+2. Select QuestManager GameObject
+3. QuestManager → Active Quests → + to add a slot
+4. Drag your QuestData asset into the slot
+5. Save the scene
+
+Multiple quests can be active at once; QuestLogUI lists all of them.
+
+--------------------------------------------------------------------------------
+D. EXAMPLE — "COLLECT 3 CATNIP"
+--------------------------------------------------------------------------------
+1. Create → Quests → New Quest → CollectCatnip
+2. Set:
+     questName       = Collect Catnip
+     objectiveType   = ItemCollected
+     targetAmount    = 3
+     catCoinReward   = 15
+     requiredItem    = Assets/Items/Catnip.asset
+3. Add to QuestManager.activeQuests
+4. Play → forage until you have Catnip x3 → quest completes, +15 CatCoins
+
+--------------------------------------------------------------------------------
+E. EXAMPLE — "FORAGE 5 TIMES"
+--------------------------------------------------------------------------------
+     objectiveType   = ForageCount
+     targetAmount    = 5
+     requiredItem    = leave empty
+
+--------------------------------------------------------------------------------
+F. EDITING "FIRST SCRATCH" DEFAULTS
+--------------------------------------------------------------------------------
+Asset: Assets/Quests/FirstScratch.asset
+
+  Current: ScratchCount, target 3, reward 10
+  Change targetAmount / catCoinReward in the Inspector anytime
+  No code change needed
+
+--------------------------------------------------------------------------------
+G. WHERE PROGRESS IS REPORTED (DON'T BREAK THESE CALLS)
+--------------------------------------------------------------------------------
+ScratchPost.Interact   → CatCoins.Add + QuestManager.ReportScratch()
+ForagePatch.Interact   → Inventory.AddItem + ReportItemCollected + ReportForage
+CatCoins balance       → QuestManager listens OnBalanceChanged for CatCoinTotal
+Inventory changes      → QuestManager HandleInventoryChanged for ItemCollected
+
+--------------------------------------------------------------------------------
+H. FUTURE EXTENSIONS (NOT BUILT YET)
+--------------------------------------------------------------------------------
+• Quest states: Available / Active / Completed / TurnedIn
+• Talk-to-NPC to accept/turn in
+• Remove completed quests from activeQuests UI
+• Quest giver markers
+• Save/load progress
+
+================================================================================

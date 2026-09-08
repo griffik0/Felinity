@@ -1,0 +1,62 @@
+================================================================================
+05 — ADDING ITEMS & FORAGE DROPS
+================================================================================
+
+--------------------------------------------------------------------------------
+A. CREATE A NEW ITEM
+--------------------------------------------------------------------------------
+1. Project → Assets/Items/ → right-click
+2. Create → Items → New Item
+3. Fill Inspector:
+
+     itemName       Shown in inventory UI (e.g. "Sardine")
+     description    One-line flavor text
+     category       Herb | Fish | Material | Cosmetic
+
+4. Save (Ctrl+S)
+
+Existing placeholders:
+  Assets/Items/Catnip.asset      Herb — "A fragrant herb cats love to nibble."
+  Assets/Items/WildBerry.asset   Herb — "A sweet berry found in sunny patches."
+  Assets/Items/Feather.asset     Herb — "A soft feather perfect for batting around."
+
+--------------------------------------------------------------------------------
+B. ADD ITEM TO FORAGE DROP TABLE
+--------------------------------------------------------------------------------
+1. Select ForagePatch in the scene (and update the Prefab too if you use it)
+2. ForagePatch → Possible Drops → increase Size
+3. Drag the new ItemData into an empty element
+4. Each forage picks ONE entry uniformly at random
+
+To make Catnip more common: add Catnip multiple times in the array
+(e.g. Catnip, Catnip, Catnip, Feather).
+
+--------------------------------------------------------------------------------
+C. GIVE / REMOVE ITEMS FROM CODE
+--------------------------------------------------------------------------------
+  InventorySystem.Instance.AddItem(myItem, 1);
+  bool ok = InventorySystem.Instance.RemoveItem(myItem, 1);
+  int n = InventorySystem.Instance.GetCount(myItem);
+
+Listen for UI / quests:
+  InventorySystem.Instance.OnInventoryChanged += YourHandler;
+
+--------------------------------------------------------------------------------
+D. INVENTORY UI
+--------------------------------------------------------------------------------
+Object: GameUI/InventoryText (InventoryUI)
+Updates live. Format:
+
+  Inventory:
+  Catnip x2
+  Feather x1
+
+No icons yet — see 03_ADDING_SPRITES.txt / 07_NEXT_STEPS.txt to add sprites
+to ItemData later.
+
+--------------------------------------------------------------------------------
+E. ITEM QUESTS
+--------------------------------------------------------------------------------
+See 04_ADDING_QUESTS.txt → ObjectiveType.ItemCollected + requiredItem.
+
+================================================================================

@@ -1,0 +1,70 @@
+================================================================================
+07 — SUGGESTED NEXT STEPS
+================================================================================
+Ordered for a small cat exploration game. Do one slice at a time.
+
+--------------------------------------------------------------------------------
+1. ART PASS (HIGH IMPACT)
+--------------------------------------------------------------------------------
+[ ] Draw / import cat walk + idle sprites → Art/Sprites + Art/Animations
+[ ] Wire Animator to PlayerController.IsMoving
+[ ] Replace ScratchPost, ForagePatch, CatTree placeholders
+[ ] Paint a small Ground + Collision tilemap neighborhood around spawn
+[ ] Optional: add Sprite field to ItemData for inventory icons
+
+--------------------------------------------------------------------------------
+2. CONTENT PASS
+--------------------------------------------------------------------------------
+[ ] Add 2–3 more quests (ForageCount, ItemCollected Catnip, CatCoinTotal)
+[ ] Add Fish / Material items; weight forage drop table
+[ ] Second ForagePatch or ScratchPost elsewhere in the map
+[ ] NPC interactable that only talks / opens a quest (IInteractable)
+
+--------------------------------------------------------------------------------
+3. SYSTEMS POLISH
+--------------------------------------------------------------------------------
+[ ] Persist CatCoins + Inventory + Quest progress (PlayerPrefs or JSON save)
+[ ] Pause / inventory key (Tab) with a fuller panel
+[ ] Sound hooks: walk loop, scratch SFX, forage SFX, quest complete jingle
+    (drop clips in Assets/Audio/)
+[ ] Make DayNightCycle light keyframes editable in Inspector (SerializeField)
+[ ] Soft day/night events (shop closed at night, nocturnal NPC)
+
+--------------------------------------------------------------------------------
+4. CURFEW / HOME FANTASY
+--------------------------------------------------------------------------------
+[ ] CatTree sprite + "nap" interactable at home
+[ ] Interior scene or fade to "safe at home" bedtime vignette
+[ ] Reward for returning before hardCurfewHour (bonus CatCoins)
+
+--------------------------------------------------------------------------------
+5. QUEST SYSTEM UPGRADES
+--------------------------------------------------------------------------------
+[ ] Quest Journal panel (description, rewards)
+[ ] OnQuestCompleted UI toast (not only Debug.Log)
+[ ] Chain quests (complete A unlocks B)
+[ ] New ObjectiveType ideas: VisitLocation, TalkToNpc, SurviveUntilHour
+
+--------------------------------------------------------------------------------
+6. ENGINEERING HYGIENE
+--------------------------------------------------------------------------------
+[ ] Move magic numbers (day 6–19 window) to Inspector fields
+[ ] Add a small Bootstrap / GameSystems prefab with DayNightCycle,
+    QuestManager, InventorySystem so new scenes stay consistent
+[ ] Add MainWorld to Build Settings as first scene
+[ ] .gitignore already typical for Unity — commit Docs/ with the project
+
+--------------------------------------------------------------------------------
+HOW TO USE THIS DOCS FOLDER
+--------------------------------------------------------------------------------
+• Start at 00_INDEX.txt
+• Change numbers → 02_DEFAULT_SETTINGS.txt
+• Swap art → 03_ADDING_SPRITES.txt
+• Design content → 04_ADDING_QUESTS.txt + 05_ADDING_ITEMS.txt
+• New world toys → 06_ADDING_INTERACTABLES.txt
+• Roadmap → this file
+
+When you finish a next-step checkbox, note the date beside it so future you
+(or an AI assistant) knows what is already done.
+
+================================================================================

@@ -1,0 +1,87 @@
+================================================================================
+01 — WHAT WAS BUILT (PROMPT HISTORY)
+================================================================================
+
+--------------------------------------------------------------------------------
+PROMPT 1 — PROJECT FOUNDATION
+--------------------------------------------------------------------------------
+• Folder structure under Assets/ (Art, Scripts, Prefabs, Scenes, Audio, Tilemaps)
+• Packages: 2D Animation, 2D Tilemap Editor, Cinemachine (installed/verified)
+• Scene: Assets/Scenes/MainWorld.unity
+  - Player: Rigidbody2D (gravity 0), CircleCollider2D, white SpriteRenderer
+  - Cinemachine Virtual Camera: orthographic, follows Player, damped
+  - Grid → Ground tilemap + Collision tilemap (TilemapCollider2D on Collision)
+• Scripts/Player/PlayerController.cs
+  - WASD / arrows, 8-direction, normalized diagonals
+  - Rigidbody2D.MovePosition in FixedUpdate
+  - public moveSpeed (default 4)
+  - IsMoving + OnInteract() (later wired to interaction system)
+
+--------------------------------------------------------------------------------
+PROMPT 2 — DAY / NIGHT + CURFEW
+--------------------------------------------------------------------------------
+• Scripts/Systems/DayNightCycle.cs (singleton)
+  - CurrentHour 0–24, minutesPerRealSecond, OnHourChanged
+  - IsDaytime 6:00–19:00, IsNight 19:00–6:00
+  - Lerps Global Light 2D color/intensity (dawn/noon/dusk/night)
+• Scripts/Systems/GameClockUI.cs — top-right "H:MM AM/PM"
+• Scripts/Player/HomeCurfew.cs — night warning + midnight soft teleport home
+• CatTree placeholder (brown square), tag Home, wired as homePosition
+• GameUI Canvas: ClockText, CurfewWarningText, FadePanel
+
+--------------------------------------------------------------------------------
+PROMPT 3 — INTERACTION + CATCOINS
+--------------------------------------------------------------------------------
+• Scripts/Systems/IInteractable.cs
+• Player/InteractionRange child (CircleCollider2D trigger)
+• E or left-click → closest IInteractable
+• Scripts/Systems/InteractionPromptUI.cs — "[E] <prompt>" above player
+• ScratchPost (orange) — +CatCoins, console log
+• ForagePatch (green) — disables, respawns 30s
+• Scripts/Systems/CatCoins.cs — static balance + CatCoinsUI top-left
+• Prefabs: Assets/Prefabs/Interactables/ScratchPost.prefab, ForagePatch.prefab
+
+--------------------------------------------------------------------------------
+PROMPT 4 — QUEST SYSTEM
+--------------------------------------------------------------------------------
+• Scripts/Quests/QuestData.cs (ScriptableObject)
+  - ObjectiveType: ScratchCount, ForageCount, CatCoinTotal (+ ItemCollected later)
+• Scripts/Quests/QuestManager.cs — progress dict, ReportScratch/ReportForage
+• Scripts/Quests/QuestLogUI.cs — text under CatCoins
+• Asset: Assets/Quests/FirstScratch.asset (ScratchCount 3, reward 10)
+• QuestManager GameObject with First Scratch in activeQuests
+
+--------------------------------------------------------------------------------
+PROMPT 5 — INVENTORY
+--------------------------------------------------------------------------------
+• Scripts/Systems/ItemData.cs (ScriptableObject) + ItemCategory enum
+• Assets/Items/: Catnip, WildBerry, Feather (all Herb)
+• Scripts/Systems/InventorySystem.cs — AddItem / RemoveItem / OnInventoryChanged
+• Scripts/Systems/InventoryUI.cs — bottom-left item list
+• ForagePatch.possibleDrops → random Catnip / Wild Berry / Feather
+• QuestData ObjectiveType.ItemCollected + requiredItem field
+
+--------------------------------------------------------------------------------
+MAINWORLD HIERARCHY (REFERENCE)
+--------------------------------------------------------------------------------
+Main Camera (+ CinemachineBrain)
+Global Light 2D
+Player (+ PlayerController, HomeCurfew, InteractionRange child)
+Grid / Ground / Collision
+Virtual Camera (CinemachineFollow → Player)
+CatTree (tag Home)
+DayNightCycle
+QuestManager
+InventorySystem
+GameUI
+  ClockText
+  CurfewWarningText
+  FadePanel
+  CatCoinsText
+  InteractionPrompt
+  QuestLogText
+  InventoryText
+ScratchPost
+ForagePatch
+
+================================================================================

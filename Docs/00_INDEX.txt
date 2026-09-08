@@ -1,0 +1,56 @@
+================================================================================
+FELINITY — IMPLEMENTATION DIRECTIONS (INDEX)
+================================================================================
+Project: top-down 2D cat exploration game (Unity 6 / URP 2D)
+Scene:   Assets/Scenes/MainWorld.unity
+
+This folder holds plain-text guides for everything built so far and what to do
+next (sprites, quests, items, tuning defaults). Open any file in a text editor
+or from Unity's Project window if you copy these under Assets later.
+
+--------------------------------------------------------------------------------
+FILES IN THIS FOLDER
+--------------------------------------------------------------------------------
+00_INDEX.txt                 ← you are here
+01_WHAT_WAS_BUILT.txt        Full summary of systems from each setup prompt
+02_DEFAULT_SETTINGS.txt      All tunable defaults and where to change them
+03_ADDING_SPRITES.txt        Replace placeholders with real art / animations
+04_ADDING_QUESTS.txt         Create and assign new QuestData assets
+05_ADDING_ITEMS.txt          Create items and forage drop tables
+06_ADDING_INTERACTABLES.txt  New IInteractable objects / prefabs
+07_NEXT_STEPS.txt            Suggested future features in priority order
+08_HOW_TO_PLAY.txt           Player-facing controls, UI, and how to play
+                             (UPDATE THIS whenever new features are added)
+
+--------------------------------------------------------------------------------
+QUICK START — MOST COMMON EDITS
+--------------------------------------------------------------------------------
+• How to play the current build     → Docs/08_HOW_TO_PLAY.txt
+• Player speed / interact range     → Player object → PlayerController
+• Day length / start time           → DayNightCycle object
+• Curfew radius / midnight hour     → Player → HomeCurfew
+• Scratch reward                    → ScratchPost → coinsPerScratch
+• Forage drops / respawn time       → ForagePatch → possibleDrops / respawnSeconds
+• Active quests                     → QuestManager → activeQuests list
+• New quest asset                   → Project: right-click → Create → Quests → New Quest
+• New item asset                    → Project: right-click → Create → Items → New Item
+
+NOTE: After each new feature prompt, 08_HOW_TO_PLAY.txt should be updated so
+controls, UI, and "what you can do" always match the live game.
+
+--------------------------------------------------------------------------------
+FOLDER STRUCTURE (Assets/)
+--------------------------------------------------------------------------------
+Art/Sprites          ← put character, prop, and UI sprites here
+Art/Animations       ← animator controllers / clips
+Scripts/Player       ← PlayerController, HomeCurfew
+Scripts/Systems      ← day/night, inventory, interactables, coins
+Scripts/Quests       ← QuestData, QuestManager, QuestLogUI
+Prefabs/Interactables← ScratchPost, ForagePatch prefabs
+Quests/              ← QuestData assets (e.g. FirstScratch.asset)
+Items/               ← ItemData assets (Catnip, Wild Berry, Feather)
+Scenes/              ← MainWorld.unity
+Audio/               ← (empty — ready for SFX/music)
+Tilemaps/            ← (empty — ready for tiles/palettes)
+
+================================================================================

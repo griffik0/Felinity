@@ -1,0 +1,80 @@
+================================================================================
+03 — ADDING / REPLACING SPRITES
+================================================================================
+All current visuals are placeholder white squares tinted in the Inspector.
+Put real art under Assets/Art/Sprites (and animations under Art/Animations).
+
+--------------------------------------------------------------------------------
+A. IMPORT A SPRITE
+--------------------------------------------------------------------------------
+1. Drop a PNG into Assets/Art/Sprites/
+2. Select it in the Project window
+3. Inspector import settings (typical for pixel / top-down 2D):
+     Texture Type          = Sprite (2D and UI)
+     Sprite Mode           = Single (or Multiple for sheets)
+     Pixels Per Unit       = match your tile size (often 16, 32, or 100)
+     Filter Mode           = Point (no filter) for pixel art
+     Compression           = None or Low (for crisp pixels)
+4. Click Apply
+
+Existing placeholder:
+  Assets/Art/Sprites/PlaceholderWhite.png  (32x32 white square)
+
+--------------------------------------------------------------------------------
+B. ASSIGN TO THE PLAYER
+--------------------------------------------------------------------------------
+1. Select Player in MainWorld Hierarchy
+2. Sprite Renderer → Sprite → pick your cat sprite
+3. Adjust Scale / Sorting Order as needed (Player currently uses sortingOrder 10)
+4. Optional: resize CircleCollider2D radius to match the sprite footprint
+
+Animation hookup (later):
+  • PlayerController.IsMoving is already public — drive Animator bool "IsMoving"
+  • Create Animator Controller in Assets/Art/Animations/
+  • Add Animator component to Player; wire Idle / Walk clips
+
+--------------------------------------------------------------------------------
+C. ASSIGN TO CATTREE / PROPS
+--------------------------------------------------------------------------------
+1. Select CatTree (or any prop)
+2. Sprite Renderer → assign sprite; clear the brown tint (Color = white) if art
+   already has color
+3. Keep Tag = Home if it is still the curfew home
+
+--------------------------------------------------------------------------------
+D. ASSIGN TO SCRATCHPOST / FORAGEPATCH
+--------------------------------------------------------------------------------
+1. Open scene instance OR Prefab under Assets/Prefabs/Interactables/
+2. Replace Sprite Renderer sprite
+3. Keep CircleCollider2D (trigger) so InteractionRange still detects them
+4. Floating TextMeshPro Label child can stay, or delete when art includes a name
+
+--------------------------------------------------------------------------------
+E. TILEMAPS (GROUND / WALLS)
+--------------------------------------------------------------------------------
+1. Create a Tile Palette: Window → 2D → Tile Palette
+2. Slice a tileset sprite sheet; drag tiles into a palette asset under Tilemaps/
+3. Paint on Grid/Ground (no collider)
+4. Paint walls only on Grid/Collision (has TilemapCollider2D)
+5. Optional: add CompositeCollider2D + Rigidbody2D (Static) on Collision for
+   cleaner wall physics
+
+--------------------------------------------------------------------------------
+F. UI
+--------------------------------------------------------------------------------
+Current UI is TextMeshPro text only — no icon sprites required.
+When you want icons:
+  • Add Image children under GameUI
+  • Or extend InventoryUI / QuestLogUI to show Sprite from ItemData (add a
+    Sprite field to ItemData later)
+
+--------------------------------------------------------------------------------
+SORTING ORDER CHEAT SHEET (CURRENT)
+--------------------------------------------------------------------------------
+Ground tilemap           0
+Collision tilemap        1
+CatTree / props          ~5
+Player                   10
+World-space TMP labels   ~20
+
+================================================================================

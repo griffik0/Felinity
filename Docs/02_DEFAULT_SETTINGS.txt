@@ -1,0 +1,153 @@
+================================================================================
+02 — DEFAULT SETTINGS (HOW TO TUNE WHAT EXISTS)
+================================================================================
+Change these in the Unity Inspector on the listed object/component.
+Values below are the current defaults from the initial setup.
+
+--------------------------------------------------------------------------------
+PLAYER MOVEMENT & INTERACTION
+--------------------------------------------------------------------------------
+Object:     Player
+Component:  PlayerController
+
+  moveSpeed            = 4
+  interactionRadius    = 1.25   (also sets InteractionRange CircleCollider2D)
+
+Child:      Player/InteractionRange
+Component:  CircleCollider2D
+  isTrigger            = true
+  radius               = 1.25
+
+Controls:   WASD / Arrow keys move
+            E or Left Click interact
+
+--------------------------------------------------------------------------------
+CINEMACHINE CAMERA
+--------------------------------------------------------------------------------
+Object:     Virtual Camera
+Components: CinemachineCamera + CinemachineFollow
+
+  Follow target        = Player
+  Orthographic         = true
+  Orthographic size    ≈ 5
+  Position damping     ≈ (1, 1, 1)   — higher = smoother/slower trail
+
+Object:     Main Camera
+  CinemachineBrain present
+
+--------------------------------------------------------------------------------
+DAY / NIGHT CYCLE
+--------------------------------------------------------------------------------
+Object:     DayNightCycle
+Component:  DayNightCycle
+
+  minutesPerRealSecond = 1      → 1 real second = 1 in-game minute
+                                → full 24h ≈ 24 real minutes
+  startHour            = 8      → game starts at 8:00 AM
+  globalLight          = Global Light 2D (assigned)
+
+  IsDaytime            = 6:00 inclusive → 19:00 exclusive
+  IsNight              = otherwise
+
+  Light keyframes (hardcoded in script — edit DayNightCycle.cs to change):
+    Hour 0 / 24  dim blue     intensity 0.35
+    Hour 6       orange dawn  intensity 0.75
+    Hour 12      warm noon    intensity 1.25
+    Hour 19      orange dusk  intensity 0.65
+
+Tips for testing:
+  • Set minutesPerRealSecond to 10–60 to speed through a day
+  • Set startHour to 18.5 to begin near dusk / curfew
+
+--------------------------------------------------------------------------------
+HOME CURFEW
+--------------------------------------------------------------------------------
+Object:     Player
+Component:  HomeCurfew
+
+  homePosition         = CatTree transform
+  curfewRadius         = 3      → warning if farther than this at night
+  hardCurfewHour       = 0      → midnight soft teleport home
+  fadeDuration         = 0.75   → black fade in/out seconds
+  pulseSpeed           = 4      → warning blink rate
+  warningText          = GameUI/CurfewWarningText
+  fadePanel            = GameUI/FadePanel (CanvasGroup)
+
+Object:     CatTree
+  Position             ≈ (2.5, 1, 0)
+  Tag                  = Home
+  Color                = brown placeholder square
+
+--------------------------------------------------------------------------------
+CATCOINS
+--------------------------------------------------------------------------------
+Code:       Scripts/Systems/CatCoins.cs (static)
+
+  CatCoinBalance starts at 0
+  ScratchPost.coinsPerScratch = 2 (Inspector on ScratchPost)
+  First Scratch quest reward  = 10 (on FirstScratch.asset)
+
+UI:         GameUI/CatCoinsText (top-left) via CatCoinsUI
+
+--------------------------------------------------------------------------------
+SCRATCH POST
+--------------------------------------------------------------------------------
+Object / Prefab: ScratchPost
+Component:       ScratchPost
+
+  coinsPerScratch      = 2
+  Prompt               = "Scratch"
+  Position in scene    ≈ (-2.5, 0.5, 0)
+
+--------------------------------------------------------------------------------
+FORAGE PATCH
+--------------------------------------------------------------------------------
+Object / Prefab: ForagePatch
+Component:       ForagePatch
+
+  respawnSeconds       = 30
+  possibleDrops[]      = Catnip, Wild Berry, Feather
+  Prompt               = "Forage"
+  Position in scene    ≈ (0, 2.5, 0)
+
+Behavior: picks one random drop, AddItem, ReportItemCollected, ReportForage,
+          hides visuals/collider, respawns after respawnSeconds.
+
+--------------------------------------------------------------------------------
+QUESTS
+--------------------------------------------------------------------------------
+Object:     QuestManager
+Component:  QuestManager
+
+  activeQuests[0]      = Assets/Quests/FirstScratch.asset
+
+Asset:      FirstScratch.asset
+  questName            = First Scratch
+  objectiveType        = ScratchCount
+  targetAmount         = 3
+  catCoinReward        = 10
+  requiredItem         = (unused for ScratchCount)
+
+UI:         GameUI/QuestLogText — "First Scratch: current/target"
+
+--------------------------------------------------------------------------------
+INVENTORY
+--------------------------------------------------------------------------------
+Object:     InventorySystem
+Component:  InventorySystem (no public defaults — empty bag at start)
+
+UI:         GameUI/InventoryText (bottom-left)
+  Format:   "<itemName> x<count>"
+
+--------------------------------------------------------------------------------
+UI LAYOUT (SCREEN-SPACE GameUI CANVAS)
+--------------------------------------------------------------------------------
+CatCoinsText         top-left      (24, -24) from top-left
+QuestLogText         top-left      (24, -72) below coins
+ClockText            top-right     (-24, -24) from top-right
+CurfewWarningText    top-center    (0, -72)
+InteractionPrompt    follows player head in screen space
+InventoryText        bottom-left   (24, 24) from bottom-left
+FadePanel            full screen black CanvasGroup
+
+================================================================================
