@@ -1,7 +1,7 @@
 ================================================================================
 HOW TO PLAY — FELINITY
 ================================================================================
-Last updated: after Inventory system (prompt 5) + Docs folder setup
+Last updated: after scratching post + foraging bush prop sprites
 
 Open the MainWorld scene (Assets/Scenes/MainWorld.unity) and press Play.
 
@@ -24,6 +24,10 @@ When something is in range, a prompt appears above you:
 
   [E] Scratch
   [E] Forage
+
+Your cat faces the direction you last moved (N/NE/E/SE/S/SW/W/NW).
+While moving, a walk loop plays for that direction (8 frames, 0.1s each — 2x the export delay).
+When you stop, the matching idle pose is shown.
 
 --------------------------------------------------------------------------------
 ON-SCREEN UI
@@ -48,19 +52,20 @@ Above player (when near an interactable)
 WHAT YOU CAN DO
 --------------------------------------------------------------------------------
 1) MOVE AROUND
-   You are the white square (placeholder cat). Camera follows smoothly.
+   You are the cat character with idle + walk art.
+   Camera follows smoothly. Facing and walk loops update with direction.
 
-2) SCRATCH THE ORANGE POST ("ScratchPost")
-   - Walk up until you see [E] Scratch
+2) SCRATCH THE SCRATCHING POST ("ScratchPost")
+   - Walk up to the scratching post prop until you see [E] Scratch
    - Press E / click
    - Gain +2 CatCoins each scratch
    - Progresses the "First Scratch" quest (need 3 scratches)
 
-3) FORAGE THE GREEN PATCH ("ForagePatch")
-   - Walk up until you see [E] Forage
+3) FORAGE THE BUSH ("ForagePatch")
+   - Walk up to the foraging bush until you see [E] Forage
    - Press E / click
    - Receive one random item: Catnip, Wild Berry, or Feather
-   - Patch disappears and respawns after 30 seconds
+   - Bush disappears and respawns after 30 seconds
    - Inventory panel updates live
 
 4) WATCH THE DAY / NIGHT CYCLE
@@ -69,10 +74,10 @@ WHAT YOU CAN DO
    - Daytime is roughly 6:00 AM – 7:00 PM; night is after that
 
 5) RESPECT CURFEW AT NIGHT
-   - Home is the brown square "CatTree" (tagged Home)
-   - At night, if you stray farther than ~3 units from CatTree, the warning appears
+   - Home is the CatBed (tier 1 bed sprite) tagged Home
+   - At night, if you stray farther than ~3 units from CatBed, the warning appears
    - At midnight (0:00), if you are still too far, the screen fades to black,
-     you are returned to CatTree ("you dozed off"), then the fade clears
+     you are returned to CatBed ("you dozed off"), then the fade clears
 
 6) COMPLETE QUESTS
    - Default active quest: First Scratch — scratch the post 3 times
@@ -82,10 +87,10 @@ WHAT YOU CAN DO
 --------------------------------------------------------------------------------
 MAP LANDMARKS (PLACEHOLDERS)
 --------------------------------------------------------------------------------
-Player spawn          near (0, 0)
-CatTree (home)        brown square near spawn
-ScratchPost           orange square
-ForagePatch           green square
+Player (cat)          near (0, 0) — idle + walk sprites
+CatBed (home)         tier_1 bed sprite near spawn (tag Home)
+ScratchPost           Assets/Art/Sprites/Props/scratching_post.png
+ForagePatch           Assets/Art/Sprites/Props/foraging_bush.png
 Ground / Collision    empty tilemap layers (paint tiles later)
 
 --------------------------------------------------------------------------------
@@ -94,12 +99,14 @@ TIPS FOR TESTING SYSTEMS QUICKLY
 • Speed up the day: select DayNightCycle → raise minutesPerRealSecond (e.g. 30–60)
 • Start near night: DayNightCycle → startHour ≈ 18.5
 • Forage again sooner: ForagePatch → lower respawnSeconds
+• Speed up / slow walk anim: Player → PlayerFacing → frameDuration
 • See all defaults: Docs/02_DEFAULT_SETTINGS.txt
 
 --------------------------------------------------------------------------------
 NOT IN THE GAME YET
 --------------------------------------------------------------------------------
-• Real cat / world art and animations
+• Run animation (walk only)
+• Prop / world art beyond placeholders
 • Sound / music
 • Save / load
 • Pause menu

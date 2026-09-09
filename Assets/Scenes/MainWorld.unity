@@ -662,7 +662,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.55
+  m_Radius: 0.45
 --- !u!212 &375616359
 SpriteRenderer:
   serializedVersion: 2
@@ -712,8 +712,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3714757815231933587, guid: be13cbdf981ad554faa4849367f90fd9, type: 3}
-  m_Color: {r: 1, g: 0.55, b: 0.15, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 8409669133ce0154abbd2e83f78e209b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -732,7 +732,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.5, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1962613065}
@@ -834,7 +834,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -963,7 +963,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.55
+  m_Radius: 0.45
 --- !u!212 &495233495
 SpriteRenderer:
   serializedVersion: 2
@@ -1013,8 +1013,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3714757815231933587, guid: be13cbdf981ad554faa4849367f90fd9, type: 3}
-  m_Color: {r: 0.35, g: 0.8, b: 0.3, a: 1}
+  m_Sprite: {fileID: 21300000, guid: bbe5727789d27ea4996e49454fc3241a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1033,7 +1033,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2.5, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2111789812}
@@ -1134,7 +1134,7 @@ GameObject:
   - component: {fileID: 655296403}
   - component: {fileID: 655296402}
   m_Layer: 0
-  m_Name: CatTree
+  m_Name: CatBed
   m_TagString: Home
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1189,8 +1189,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3714757815231933587, guid: be13cbdf981ad554faa4849367f90fd9, type: 3}
-  m_Color: {r: 0.45, g: 0.28, b: 0.12, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 5f55b9c90bbafab429ae649fe2bc7d31, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1209,7 +1209,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.5, y: 1, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.8, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2395,7 +2395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1962613065
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2573,6 +2573,7 @@ GameObject:
   - component: {fileID: 2008471607}
   - component: {fileID: 2008471606}
   - component: {fileID: 2008471611}
+  - component: {fileID: 2008471612}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2643,7 +2644,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3714757815231933587, guid: be13cbdf981ad554faa4849367f90fd9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4f3267077afd3384891261bfdc91cf34, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2687,8 +2688,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.4
+  m_Offset: {x: 0, y: -0.05}
+  m_Radius: 0.28
 --- !u!50 &2008471609
 Rigidbody2D:
   serializedVersion: 5
@@ -2751,6 +2752,100 @@ MonoBehaviour:
   pulseSpeed: 4
   warningText: {fileID: 1848054268}
   fadePanel: {fileID: 766948599}
+--- !u!114 &2008471612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008471605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1490f0ba59afa14da0805ed12784a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFacing
+  idleSouth: {fileID: 21300000, guid: 4f3267077afd3384891261bfdc91cf34, type: 3}
+  idleSouthEast: {fileID: 21300000, guid: af290af8c9bd03c49ad3cdd09120ba13, type: 3}
+  idleEast: {fileID: 21300000, guid: b21d4217ee3efe245b51600407de7c65, type: 3}
+  idleNorthEast: {fileID: 21300000, guid: 01a482530ba05ae4b8947c69ba26dc03, type: 3}
+  idleNorth: {fileID: 21300000, guid: 30a3eb6d9bd31f04b811a827c8fb1f13, type: 3}
+  idleNorthWest: {fileID: 21300000, guid: 61bc264ddc5c5254dbb1fdf46c63cbd2, type: 3}
+  idleWest: {fileID: 21300000, guid: cb2591db2a7443e40b0e1c48dd46acb3, type: 3}
+  idleSouthWest: {fileID: 21300000, guid: 25d0c55c3303a6e4dac8a076884e88a8, type: 3}
+  walkSouth:
+  - {fileID: 21300000, guid: 7308c38040504a447b5b1ddf6d972ad6, type: 3}
+  - {fileID: 21300000, guid: 42a0b4f51d932e84da1635b69a652169, type: 3}
+  - {fileID: 21300000, guid: e8a88c7874aa06c41b0a0a7c76e894dd, type: 3}
+  - {fileID: 21300000, guid: 24fa0028515191e48bb434c2f398b03b, type: 3}
+  - {fileID: 21300000, guid: 83bca3ed5e625d34bb5f5955abd48d35, type: 3}
+  - {fileID: 21300000, guid: 98b049bdccf49904b8f0027b633de145, type: 3}
+  - {fileID: 21300000, guid: ebc162b84196e69459521e7198b960c3, type: 3}
+  - {fileID: 21300000, guid: 45da2c21b99cee14aa43c88b3dfc5ebc, type: 3}
+  walkSouthEast:
+  - {fileID: 21300000, guid: e926d4d29163e7645919c056649d07e9, type: 3}
+  - {fileID: 21300000, guid: 5ad603524d4f2fc4e9e44775abc94f03, type: 3}
+  - {fileID: 21300000, guid: bcdfabcef61ce8749bc4d0155651a756, type: 3}
+  - {fileID: 21300000, guid: ffd9966442133664daaa53523d218c07, type: 3}
+  - {fileID: 21300000, guid: dbd61dc5bc098044ab6b07b10fa7c2fa, type: 3}
+  - {fileID: 21300000, guid: 118376d48d28eb44fb93188a7b96e329, type: 3}
+  - {fileID: 21300000, guid: ee78ec3da7479bc4eb9a1debc37244c6, type: 3}
+  - {fileID: 21300000, guid: bcc0d8557df5db64aaf4ed9da108a02b, type: 3}
+  walkEast:
+  - {fileID: 21300000, guid: 528991fc73d1ee84e88b42305749f9ff, type: 3}
+  - {fileID: 21300000, guid: 664dcb45156554f4ebb61b113150373b, type: 3}
+  - {fileID: 21300000, guid: 804f48c6324195743be176ff4d3acd45, type: 3}
+  - {fileID: 21300000, guid: 67c2dad975488fb478ef47a66273c3d4, type: 3}
+  - {fileID: 21300000, guid: 7fcbaa53676bd8546940609268cc22de, type: 3}
+  - {fileID: 21300000, guid: 7438586ecfe8a5347aea26ceec728af0, type: 3}
+  - {fileID: 21300000, guid: cbfc579fbc1618b4caa564ec58361d43, type: 3}
+  - {fileID: 21300000, guid: df947ba5d59d9964e862149c26b99eca, type: 3}
+  walkNorthEast:
+  - {fileID: 21300000, guid: 43b0fa626f43d3a4f8ef098c08e15c7e, type: 3}
+  - {fileID: 21300000, guid: 69b55fae2081ce049ac5d63d7784af86, type: 3}
+  - {fileID: 21300000, guid: a5e02d9a5fc471c4e9b195f44739780b, type: 3}
+  - {fileID: 21300000, guid: e3eb728c90cc8bd4f9a4ce749e603e9f, type: 3}
+  - {fileID: 21300000, guid: 17c93a2de8e486142aea183791a718a9, type: 3}
+  - {fileID: 21300000, guid: 12b5e9b871be40b48ac0b132b1d9dca4, type: 3}
+  - {fileID: 21300000, guid: 2f9198e5550332f4da3a332b4f11687c, type: 3}
+  - {fileID: 21300000, guid: 8107684541963254a9ef22bb8fe54075, type: 3}
+  walkNorth:
+  - {fileID: 21300000, guid: d78794df3fc37494987faad6fdd8ca8d, type: 3}
+  - {fileID: 21300000, guid: 7a4127846c4141943bf2df2e99ce58b1, type: 3}
+  - {fileID: 21300000, guid: d920bbdde9e681349acb21e04029c159, type: 3}
+  - {fileID: 21300000, guid: a567f760a866dd04f8b3ad581c3e39af, type: 3}
+  - {fileID: 21300000, guid: 7a7e5604a2fd3e34aacdf98ab7299d66, type: 3}
+  - {fileID: 21300000, guid: 7aeabd44e9546304aa47b3e5bf529a34, type: 3}
+  - {fileID: 21300000, guid: a0ffc44927412d849a61048d2f51c7d6, type: 3}
+  - {fileID: 21300000, guid: cb54a3115bf79b643a2fa6647a008cd0, type: 3}
+  walkNorthWest:
+  - {fileID: 21300000, guid: 012641969db6de645a3b177e78c917ab, type: 3}
+  - {fileID: 21300000, guid: 4ffd595bf8ef49e4594b73dcc33a96f9, type: 3}
+  - {fileID: 21300000, guid: 3811d5b6e3398294c9b5e36f40707c89, type: 3}
+  - {fileID: 21300000, guid: 7c31f89022e2fd241a7a8858b1c9a5fc, type: 3}
+  - {fileID: 21300000, guid: 60f2b363abf13c14d8a04d9ef43a9dc4, type: 3}
+  - {fileID: 21300000, guid: d31dc7970e5d9c346bb6d06b6b3e5da5, type: 3}
+  - {fileID: 21300000, guid: 43525f6ee787f2845a3403dd2fb92db3, type: 3}
+  - {fileID: 21300000, guid: 9f4f5fcd18580b547baaa7f91da07d94, type: 3}
+  walkWest:
+  - {fileID: 21300000, guid: 960de87d128e1574082698bca1bae280, type: 3}
+  - {fileID: 21300000, guid: aa99e5bf48bac2b4b96192eaeb2faace, type: 3}
+  - {fileID: 21300000, guid: b90f66c19b51dcf448daab39947f67e9, type: 3}
+  - {fileID: 21300000, guid: 92c72dc69ad68ab4fa4582005b4f5e0b, type: 3}
+  - {fileID: 21300000, guid: 443a3433c5a36d645bc7f85daa747008, type: 3}
+  - {fileID: 21300000, guid: 1c17350ef52376845bc47988a8134a27, type: 3}
+  - {fileID: 21300000, guid: 83615985d60759c43a2abd18bd4d2c3c, type: 3}
+  - {fileID: 21300000, guid: cf9e84c1b6d3b014e9da037f44eed973, type: 3}
+  walkSouthWest:
+  - {fileID: 21300000, guid: 3441736a41574c742b744c06b75541a4, type: 3}
+  - {fileID: 21300000, guid: 513328dbab5f72a40a66ff7e2d05a9eb, type: 3}
+  - {fileID: 21300000, guid: 64abde877de2cab4e8a5d53df4a7b3de, type: 3}
+  - {fileID: 21300000, guid: e1a7369c5655b304ea276afde7227c42, type: 3}
+  - {fileID: 21300000, guid: 511bed8c9617f844aae0882c5cbc0e2e, type: 3}
+  - {fileID: 21300000, guid: a5297d4bb61521d4dba102ad21c78c96, type: 3}
+  - {fileID: 21300000, guid: 582a163052ff3ba4fa6a7560e9469da6, type: 3}
+  - {fileID: 21300000, guid: 0d393f9e1f9e4634e81bb564ff848f38, type: 3}
+  frameDuration: 0.1
+  facing: 0
 --- !u!1 &2044096498
 GameObject:
   m_ObjectHideFlags: 0
@@ -2895,7 +2990,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2111789812
 RectTransform:
   m_ObjectHideFlags: 0

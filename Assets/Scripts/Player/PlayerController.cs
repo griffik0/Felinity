@@ -21,6 +21,11 @@ public class PlayerController : MonoBehaviour
     public bool IsMoving { get; private set; }
 
     /// <summary>
+    /// Current movement input after diagonal normalization (zero when idle).
+    /// </summary>
+    public Vector2 MoveInput => _moveInput;
+
+    /// <summary>
     /// Closest valid interactable currently inside InteractionRange.
     /// </summary>
     public IInteractable CurrentInteractable { get; private set; }

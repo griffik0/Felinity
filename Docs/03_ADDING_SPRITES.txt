@@ -21,22 +21,43 @@ Existing placeholder:
   Assets/Art/Sprites/PlaceholderWhite.png  (32x32 white square)
 
 --------------------------------------------------------------------------------
-B. ASSIGN TO THE PLAYER
+B. PLAYER CAT SPRITES (ALREADY WIRED)
 --------------------------------------------------------------------------------
-1. Select Player in MainWorld Hierarchy
-2. Sprite Renderer → Sprite → pick your cat sprite
-3. Adjust Scale / Sorting Order as needed (Player currently uses sortingOrder 10)
-4. Optional: resize CircleCollider2D radius to match the sprite footprint
+Idle art:
+  Assets/Art/Sprites/Cat/Idle/
+    cat_idle_s.png   cat_idle_se.png   cat_idle_e.png   cat_idle_ne.png
+    cat_idle_n.png   cat_idle_nw.png   cat_idle_w.png   cat_idle_sw.png
 
-Animation hookup (later):
-  • PlayerController.IsMoving is already public — drive Animator bool "IsMoving"
-  • Create Animator Controller in Assets/Art/Animations/
-  • Add Animator component to Player; wire Idle / Walk clips
+Walk art (8 frames each, delay 0.2s in filenames):
+  Assets/Art/Animations/Cat/
+    walk_s/   walk_se/   walk_e/   walk_ne/
+    walk_n/   walk_nw/   walk_w/   walk_sw/
+      frame_0_delay-0.2s.png ... frame_7_delay-0.2s.png
+  (All walk frames normalized to 48x48 to match Idle; PPU 48, Point filter.
+   Tool: Assets/Editor/SpriteUpscaleTool.cs
+   Menu: Tools > Sprite Utilities > Upscale Walk Sprites to Match Idle)
+
+Import settings used:
+  Texture Type = Sprite, Pixels Per Unit = 48, Filter Mode = Point
+
+Component: Player → PlayerFacing
+  Idle fields     → single sprites per direction
+  Walk arrays     → 8 frames per direction (ordered 0..7)
+  frameDuration   = 0.2
+  Default facing  = South
+
+Behavior:
+  Moving  → play walk loop for current facing
+  Idle    → show matching idle sprite
+  Facing snaps to 8 directions from move input
+
+To retune speed: change PlayerFacing.frameDuration in the Inspector.
+To swap art: replace PNGs (same names/folders) or reassign arrays on PlayerFacing.
 
 --------------------------------------------------------------------------------
 C. ASSIGN TO CATTREE / PROPS
 --------------------------------------------------------------------------------
-1. Select CatTree (or any prop)
+1. Select CatBed (or any prop)
 2. Sprite Renderer → assign sprite; clear the brown tint (Color = white) if art
    already has color
 3. Keep Tag = Home if it is still the curfew home
@@ -73,7 +94,7 @@ SORTING ORDER CHEAT SHEET (CURRENT)
 --------------------------------------------------------------------------------
 Ground tilemap           0
 Collision tilemap        1
-CatTree / props          ~5
+CatBed / props           ~5
 Player                   10
 World-space TMP labels   ~20
 

@@ -26,7 +26,7 @@ PROMPT 2 — DAY / NIGHT + CURFEW
   - Lerps Global Light 2D color/intensity (dawn/noon/dusk/night)
 • Scripts/Systems/GameClockUI.cs — top-right "H:MM AM/PM"
 • Scripts/Player/HomeCurfew.cs — night warning + midnight soft teleport home
-• CatTree placeholder (brown square), tag Home, wired as homePosition
+• CatBed uses Assets/Art/Sprites/Beds/tier_1.png (tag Home, HomeCurfew target)
 • GameUI Canvas: ClockText, CurfewWarningText, FadePanel
 
 --------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ PROMPT 3 — INTERACTION + CATCOINS
 • ForagePatch (green) — disables, respawns 30s
 • Scripts/Systems/CatCoins.cs — static balance + CatCoinsUI top-left
 • Prefabs: Assets/Prefabs/Interactables/ScratchPost.prefab, ForagePatch.prefab
+• Prop sprites: Assets/Art/Sprites/Props/scratching_post.png, foraging_bush.png
 
 --------------------------------------------------------------------------------
 PROMPT 4 — QUEST SYSTEM
@@ -62,6 +63,21 @@ PROMPT 5 — INVENTORY
 • QuestData ObjectiveType.ItemCollected + requiredItem field
 
 --------------------------------------------------------------------------------
+PROMPT 6 — CAT IDLE SPRITES / FACING
+--------------------------------------------------------------------------------
+• Art: Assets/Art/Sprites/Cat/Idle/ (8 direction idle PNGs, 48x48)
+• Scripts/Player/PlayerFacing.cs — swaps idle sprite from last move direction
+• PlayerController.MoveInput exposed for facing / future walk anims
+• Player in MainWorld uses cat_idle_* (default South); white placeholder removed
+
+--------------------------------------------------------------------------------
+PROMPT 7 — CAT WALK ANIMATIONS
+--------------------------------------------------------------------------------
+• Art: Assets/Art/Animations/Cat/walk_{n,ne,e,se,s,sw,w,nw}/ (8 frames each @ 0.2s)
+• PlayerFacing extended: walk Sprite[] per direction + frameDuration
+• Moving plays walk loop; stopping returns to idle for that facing
+
+--------------------------------------------------------------------------------
 MAINWORLD HIERARCHY (REFERENCE)
 --------------------------------------------------------------------------------
 Main Camera (+ CinemachineBrain)
@@ -69,7 +85,7 @@ Global Light 2D
 Player (+ PlayerController, HomeCurfew, InteractionRange child)
 Grid / Ground / Collision
 Virtual Camera (CinemachineFollow → Player)
-CatTree (tag Home)
+CatBed (tag Home, tier_1 sprite)
 DayNightCycle
 QuestManager
 InventorySystem
@@ -81,7 +97,7 @@ GameUI
   InteractionPrompt
   QuestLogText
   InventoryText
-ScratchPost
-ForagePatch
+ScratchPost (Props/scratching_post.png)
+ForagePatch (Props/foraging_bush.png)
 
 ================================================================================

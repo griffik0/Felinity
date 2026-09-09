@@ -13,12 +13,19 @@ Component:  PlayerController
   moveSpeed            = 4
   interactionRadius    = 1.25   (also sets InteractionRange CircleCollider2D)
 
+Component:  PlayerFacing
+  idleSouth..idleSouthWest = Assets/Art/Sprites/Cat/Idle/cat_idle_*.png
+  walkSouth..walkSouthWest = Assets/Art/Animations/Cat/walk_*/frame_0..7 (8 each)
+  frameDuration            = 0.1   (2x original 0.2s export delay)
+  facing (default)         = South
+  Import: Sprite, PPU 48, Point filter
+
 Child:      Player/InteractionRange
 Component:  CircleCollider2D
   isTrigger            = true
   radius               = 1.25
 
-Controls:   WASD / Arrow keys move
+Controls:   WASD / Arrow keys move (updates facing)
             E or Left Click interact
 
 --------------------------------------------------------------------------------
@@ -65,7 +72,7 @@ HOME CURFEW
 Object:     Player
 Component:  HomeCurfew
 
-  homePosition         = CatTree transform
+  homePosition         = CatBed transform
   curfewRadius         = 3      → warning if farther than this at night
   hardCurfewHour       = 0      → midnight soft teleport home
   fadeDuration         = 0.75   → black fade in/out seconds
@@ -73,10 +80,11 @@ Component:  HomeCurfew
   warningText          = GameUI/CurfewWarningText
   fadePanel            = GameUI/FadePanel (CanvasGroup)
 
-Object:     CatTree
+Object:     CatBed (was CatTree placeholder)
+  Sprite               = Assets/Art/Sprites/Beds/tier_1.png (64x64, PPU 48)
   Position             ≈ (2.5, 1, 0)
   Tag                  = Home
-  Color                = brown placeholder square
+  Color                = white
 
 --------------------------------------------------------------------------------
 CATCOINS
@@ -95,6 +103,7 @@ SCRATCH POST
 Object / Prefab: ScratchPost
 Component:       ScratchPost
 
+  Sprite               = Assets/Art/Sprites/Props/scratching_post.png (32x32, PPU 32)
   coinsPerScratch      = 2
   Prompt               = "Scratch"
   Position in scene    ≈ (-2.5, 0.5, 0)
@@ -105,6 +114,7 @@ FORAGE PATCH
 Object / Prefab: ForagePatch
 Component:       ForagePatch
 
+  Sprite               = Assets/Art/Sprites/Props/foraging_bush.png (32x32, PPU 32)
   respawnSeconds       = 30
   possibleDrops[]      = Catnip, Wild Berry, Feather
   Prompt               = "Forage"

@@ -6,9 +6,11 @@ Ordered for a small cat exploration game. Do one slice at a time.
 --------------------------------------------------------------------------------
 1. ART PASS (HIGH IMPACT)
 --------------------------------------------------------------------------------
-[ ] Draw / import cat walk + idle sprites → Art/Sprites + Art/Animations
-[ ] Wire Animator to PlayerController.IsMoving
-[ ] Replace ScratchPost, ForagePatch, CatTree placeholders
+[x] Cat idle 8-direction sprites wired via PlayerFacing
+[x] Cat walk 8-direction loops (8 frames @ 0.2s) wired via PlayerFacing
+[ ] Optional run animation set
+[x] ScratchPost + ForagePatch prop sprites assigned
+[x] CatBed tier_1 sprite assigned as home
 [ ] Paint a small Ground + Collision tilemap neighborhood around spawn
 [ ] Optional: add Sprite field to ItemData for inventory icons
 
@@ -33,7 +35,7 @@ Ordered for a small cat exploration game. Do one slice at a time.
 --------------------------------------------------------------------------------
 4. CURFEW / HOME FANTASY
 --------------------------------------------------------------------------------
-[ ] CatTree sprite + "nap" interactable at home
+[ ] "Nap" interactable at CatBed / bedtime vignette
 [ ] Interior scene or fade to "safe at home" bedtime vignette
 [ ] Reward for returning before hardCurfewHour (bonus CatCoins)
 
