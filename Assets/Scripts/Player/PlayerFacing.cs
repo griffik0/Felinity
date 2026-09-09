@@ -4,7 +4,6 @@ using UnityEngine;
 /// 8-direction cat visuals: idle sprites when still, walk frame loops while moving.
 /// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(PlayerController))]
 public class PlayerFacing : MonoBehaviour
 {
     public enum Facing

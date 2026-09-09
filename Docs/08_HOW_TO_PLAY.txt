@@ -1,9 +1,11 @@
 ================================================================================
 HOW TO PLAY — FELINITY
 ================================================================================
-Last updated: after scratching post + foraging bush prop sprites
+Last updated: Character Creation (coat + name)
 
-Open the MainWorld scene (Assets/Scenes/MainWorld.unity) and press Play.
+Open the project and press Play (Editor is set to boot TitleScreen first).
+In a built player, Build Settings order is:
+  0 = TitleScreen → 1 = CharacterCreation → 2 = MainWorld
 
 --------------------------------------------------------------------------------
 GOAL (FOR NOW)
@@ -11,14 +13,40 @@ GOAL (FOR NOW)
 Explore a small top-down map as a cat. Scratch posts for CatCoins, forage for
 items, complete quests, and get home before midnight when night falls.
 
-There is no win/lose screen yet — systems are playable prototypes with text UI.
+--------------------------------------------------------------------------------
+TITLE SCREEN
+--------------------------------------------------------------------------------
+Title text: "Felinity"
+  Change the name in: Scripts/Systems/GameFlow.cs → public const string GameTitle
+
+Buttons:
+  Start Game   → loads CharacterCreation
+  Quit         → stops Play Mode in Editor, or Application.Quit() in a build
 
 --------------------------------------------------------------------------------
-CONTROLS
+CHARACTER CREATION
+--------------------------------------------------------------------------------
+Live preview of your cat (idle poses cycle; palette-swap coats).
+
+  Coat            ◀ / ▶ arrows cycle Orange Tabby → Black → Grey → Cream
+                  Center swatch shows the current coat color + name.
+  Name            Type a name (max 16). Placeholder is "Whiskers".
+  Confirm         Enabled only when the name field is non-empty.
+                  Loads MainWorld with your coat + name on PlayerProfile.
+
+Choices live on PlayerProfile (DontDestroyOnLoad). Console on MainWorld start:
+  Welcome, <catName>!
+
+If you Play MainWorld directly (skipping Character Creation), defaults are
+Orange Tabby / "Whiskers".
+
+--------------------------------------------------------------------------------
+CONTROLS (IN MAINWORLD)
 --------------------------------------------------------------------------------
 Move                 WASD  or  Arrow keys  (8 directions; diagonals are normalized)
 Interact             E  or  Left mouse click
-                     (uses the closest interactable inside your range)
+Pause / Resume       Escape
+Coat debug           1 = Orange Tabby, 2 = Black, 3 = Grey, 4 = Cream
 
 When something is in range, a prompt appears above you:
 
@@ -30,7 +58,17 @@ While moving, a walk loop plays for that direction (8 frames, 0.1s each — 2x t
 When you stop, the matching idle pose is shown.
 
 --------------------------------------------------------------------------------
-ON-SCREEN UI
+PAUSE MENU
+--------------------------------------------------------------------------------
+Press Escape to pause (Time.timeScale = 0 — world clock/movement freeze).
+Press Escape again, or click Resume, to continue.
+
+  Resume          → unpause
+  Quit to Title   → returns to TitleScreen (resets timeScale)
+  Quit Game       → quit / stop Play Mode
+
+--------------------------------------------------------------------------------
+ON-SCREEN UI (MAINWORLD)
 --------------------------------------------------------------------------------
 Top-left
   CatCoins: X              Your currency
@@ -72,6 +110,7 @@ WHAT YOU CAN DO
    - Time starts around 8:00 AM and advances (default: 1 real second = 1 game minute)
    - Lighting shifts: warm midday → orange dusk/dawn → dim blue night
    - Daytime is roughly 6:00 AM – 7:00 PM; night is after that
+   - Clock freezes while paused (uses Time.deltaTime)
 
 5) RESPECT CURFEW AT NIGHT
    - Home is the CatBed (tier 1 bed sprite) tagged Home
@@ -85,7 +124,7 @@ WHAT YOU CAN DO
      console logs a completion message
 
 --------------------------------------------------------------------------------
-MAP LANDMARKS (PLACEHOLDERS)
+MAP LANDMARKS
 --------------------------------------------------------------------------------
 Player (cat)          near (0, 0) — idle + walk sprites
 CatBed (home)         tier_1 bed sprite near spawn (tag Home)
@@ -106,10 +145,9 @@ TIPS FOR TESTING SYSTEMS QUICKLY
 NOT IN THE GAME YET
 --------------------------------------------------------------------------------
 • Run animation (walk only)
-• Prop / world art beyond placeholders
+• Custom title/pause art
 • Sound / music
 • Save / load
-• Pause menu
 • Combat, dialogue trees, multiple maps
 • Turning in quests to an NPC (quests auto-complete when targets are met)
 

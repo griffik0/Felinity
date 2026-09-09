@@ -10,7 +10,7 @@ PLAYER MOVEMENT & INTERACTION
 Object:     Player
 Component:  PlayerController
 
-  moveSpeed            = 4
+  moveSpeed            = 3
   interactionRadius    = 1.25   (also sets InteractionRange CircleCollider2D)
 
 Component:  PlayerFacing

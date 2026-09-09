@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 4f;
+    public float moveSpeed = 3f;
 
     [Header("Interaction")]
     public float interactionRadius = 1.25f;

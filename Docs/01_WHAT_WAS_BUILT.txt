@@ -99,5 +99,38 @@ GameUI
   InventoryText
 ScratchPost (Props/scratching_post.png)
 ForagePatch (Props/foraging_bush.png)
+PauseManager + PauseCanvas (hidden until Escape)
+Player CatAppearance + CatPaletteMaterial (coat keys 1-4)
+
+--------------------------------------------------------------------------------
+PROMPT 8 — TITLE SCREEN + PAUSE MENU
+--------------------------------------------------------------------------------
+• Scene: Assets/Scenes/TitleScreen.unity (Build index 0); MainWorld index 1
+• Scripts/Systems/GameFlow.cs — GameTitle, LoadTitle/LoadMainWorld/QuitGame
+• Scripts/Systems/TitleScreenUI.cs — Start Game / Quit buttons
+• Scripts/Systems/PauseManager.cs — Escape toggle, timeScale 0/1, OnPauseStateChanged
+• DayNightCycle / movement / walk anim use Time.deltaTime (freeze while paused)
+• No Time.unscaledDeltaTime in gameplay scripts
+
+--------------------------------------------------------------------------------
+PROMPT 9 — PALETTE SWAP / COAT PRESETS
+--------------------------------------------------------------------------------
+• Shader: Assets/Shaders/SpritePaletteSwap.shader (URP sprite, 4 key→replace pairs)
+• Material: Assets/Art/Sprites/Cat/CatPaletteMaterial.mat on Player SpriteRenderer
+• Scripts/Player/CatAppearance.cs — CoatPreset + MaterialPropertyBlock ApplyCoat
+• Keys from cat_idle_s: #F29847 orange, #5F3022 dark brown, #813A2B mid brown
+• Debug hotkeys 1-4: Orange Tabby / Black / Grey / Cream (idle + walk)
+
+--------------------------------------------------------------------------------
+PROMPT 10 — CHARACTER CREATION
+--------------------------------------------------------------------------------
+• Scene: Assets/Scenes/CharacterCreation.unity (Build index 1)
+• Build order: TitleScreen (0) → CharacterCreation (1) → MainWorld (2)
+• Scripts/Systems/PlayerProfile.cs — DontDestroyOnLoad singleton (chosenCoat, catName)
+• Scripts/Systems/CharacterCreationUI.cs — coat swatches, TMP name (max 16), Confirm
+• Scripts/Systems/CharacterPreviewIdle.cs — cycles idle facing on live preview cat
+• Scripts/Systems/MainWorldBootstrap.cs — logs "Welcome, <catName>!"; default fallbacks
+• Title Start Game → CharacterCreation; Confirm → MainWorld
+• CatAppearance.Start applies PlayerProfile.chosenCoat (defaults Orange Tabby / Whiskers)
 
 ================================================================================

@@ -22,6 +22,8 @@ FILES IN THIS FOLDER
 08_HOW_TO_PLAY.txt           Player-facing controls, UI, and how to play
                              (UPDATE THIS whenever new features are added)
 
+Change game title string:    Scripts/Systems/GameFlow.cs → GameTitle
+
 --------------------------------------------------------------------------------
 QUICK START — MOST COMMON EDITS
 --------------------------------------------------------------------------------

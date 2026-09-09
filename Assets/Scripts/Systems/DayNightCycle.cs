@@ -76,6 +76,7 @@ public class DayNightCycle : MonoBehaviour
     void AdvanceClock()
     {
         float hoursPerRealSecond = minutesPerRealSecond / 60f;
+        // Uses scaled deltaTime so PauseManager (Time.timeScale = 0) freezes the clock.
         CurrentHour += hoursPerRealSecond * Time.deltaTime;
 
         if (CurrentHour >= 24f)
