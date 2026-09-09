@@ -20,4 +20,7 @@ public class QuestData : ScriptableObject
 
     [Tooltip("Used when objectiveType is ItemCollected.")]
     public ItemData requiredItem;
+
+    [Tooltip("If true, progress can reach the target without auto-completing (e.g. turn in to an NPC).")]
+    public bool requiresTurnIn;
 }

@@ -1,7 +1,7 @@
 ================================================================================
 HOW TO PLAY — FELINITY
 ================================================================================
-Last updated: Character Creation (coat + name)
+Last updated: Gerald NPC + Wild Berry quest
 
 Open the project and press Play (Editor is set to boot TitleScreen first).
 In a built player, Build Settings order is:
@@ -11,7 +11,7 @@ In a built player, Build Settings order is:
 GOAL (FOR NOW)
 --------------------------------------------------------------------------------
 Explore a small top-down map as a cat. Scratch posts for CatCoins, forage for
-items, complete quests, and get home before midnight when night falls.
+items, talk to Gerald, complete quests, and get home before midnight when night falls.
 
 --------------------------------------------------------------------------------
 TITLE SCREEN
@@ -52,10 +52,25 @@ When something is in range, a prompt appears above you:
 
   [E] Scratch
   [E] Forage
+  [E] Talk          (Gerald the NPC)
 
 Your cat faces the direction you last moved (N/NE/E/SE/S/SW/W/NW).
 While moving, a walk loop plays for that direction (8 frames, 0.1s each — 2x the export delay).
 When you stop, the matching idle pose is shown.
+
+--------------------------------------------------------------------------------
+GERALD (NPC)
+--------------------------------------------------------------------------------
+Brown square placeholder near the east side of the yard (labeled "Gerald").
+Talk to him ([E] Talk) for dialogue at the bottom of the screen.
+Advance lines with E / Space / Enter / click.
+
+First meeting: intro, then quest "Gerald's Berries" (collect 3 Wild Berry).
+While active: talk again — if you have fewer than 3, he reminds you with your count.
+With 3+: he takes the berries, grants +25 CatCoins, marks the quest done.
+Afterward: short friendly flavor lines only.
+
+Wild Berries come from ForagePatch drops.
 
 --------------------------------------------------------------------------------
 PAUSE MENU

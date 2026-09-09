@@ -133,4 +133,14 @@ PROMPT 10 — CHARACTER CREATION
 • Title Start Game → CharacterCreation; Confirm → MainWorld
 • CatAppearance.Start applies PlayerProfile.chosenCoat (defaults Orange Tabby / Whiskers)
 
+--------------------------------------------------------------------------------
+PROMPT 11 — GERALD NPC + DIALOGUE + BERRY QUEST
+--------------------------------------------------------------------------------
+• Scripts/NPC/DialogueLine.cs — serializable speakerName + text
+• Scripts/NPC/DialogueUI.cs — bottom dialogue box, [E] Continue through queued lines
+• Scripts/NPC/GeraldController.cs — IInteractable Talk; GeraldState quest flow
+• QuestManager.RegisterQuest / MarkComplete; QuestData.requiresTurnIn
+• MainWorld: Gerald GO + DialogueUI under GameUI
+• Quest: gather 3 Wild Berry → turn in → +25 CatCoins
+
 ================================================================================

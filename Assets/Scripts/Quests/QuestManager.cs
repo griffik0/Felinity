@@ -172,8 +172,55 @@ public class QuestManager : MonoBehaviour
         _progress[quest] = current;
         OnQuestProgress?.Invoke(quest, current, quest.targetAmount);
 
-        if (current >= quest.targetAmount)
+        if (current >= quest.targetAmount && !quest.requiresTurnIn)
             CompleteQuest(quest);
+    }
+
+    /// <summary>
+    /// Adds a quest at runtime (e.g. offered by an NPC) and refreshes UI progress.
+    /// </summary>
+    public void RegisterQuest(QuestData quest)
+    {
+        if (quest == null)
+            return;
+
+        if (!activeQuests.Contains(quest))
+            activeQuests.Add(quest);
+
+        if (!_progress.ContainsKey(quest))
+            _progress[quest] = 0;
+
+        // Sync ItemCollected progress from current inventory.
+        if (quest.objectiveType == ObjectiveType.ItemCollected &&
+            quest.requiredItem != null &&
+            InventorySystem.Instance != null &&
+            !_completed.Contains(quest))
+        {
+            _progress[quest] = InventorySystem.Instance.GetCount(quest.requiredItem);
+        }
+
+        int current = GetProgress(quest);
+        OnQuestProgress?.Invoke(quest, current, quest.targetAmount);
+
+        if (current >= quest.targetAmount && !quest.requiresTurnIn)
+            CompleteQuest(quest);
+    }
+
+    /// <summary>
+    /// Marks a turn-in (or any) quest complete and grants its CatCoin reward once.
+    /// </summary>
+    public void MarkComplete(QuestData quest)
+    {
+        if (quest == null)
+            return;
+
+        if (!_progress.ContainsKey(quest))
+            _progress[quest] = quest.targetAmount;
+        else
+            _progress[quest] = Mathf.Max(_progress[quest], quest.targetAmount);
+
+        OnQuestProgress?.Invoke(quest, GetProgress(quest), quest.targetAmount);
+        CompleteQuest(quest);
     }
 
     void CompleteQuest(QuestData quest)

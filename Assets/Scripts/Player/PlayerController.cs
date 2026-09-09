@@ -46,6 +46,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        DialogueUI dialogue = DialogueUI.Instance;
+        bool inventoryOpen = InventoryOverlayUI.Instance != null && InventoryOverlayUI.Instance.IsOpen;
+
+        // Full inventory overlay (and dialogue) act as modal screens: no move/interact.
+        if ((dialogue != null && dialogue.IsOpen) || inventoryOpen)
+        {
+            _moveInput = Vector2.zero;
+            IsMoving = false;
+            CurrentInteractable = null;
+            return;
+        }
+
         _moveInput = ReadMoveInput();
         if (_moveInput.sqrMagnitude > 1f)
             _moveInput.Normalize();
@@ -53,7 +65,9 @@ public class PlayerController : MonoBehaviour
         IsMoving = _moveInput.sqrMagnitude > 0.0001f;
         RefreshClosestInteractable();
 
-        if (WasInteractPressed())
+        // Ignore the same E/click that just dismissed dialogue (prevents soft-lock re-Talk).
+        if (WasInteractPressed() &&
+            (dialogue == null || !dialogue.BlocksWorldInput))
             OnInteract();
     }
 

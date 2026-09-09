@@ -54,8 +54,17 @@ public class PauseManager : MonoBehaviour
         if (kb == null)
             return;
 
-        if (kb[pauseKey].wasPressedThisFrame)
-            TogglePause();
+        if (!kb[pauseKey].wasPressedThisFrame)
+            return;
+
+        // Inventory overlay takes priority: Esc closes it before opening pause.
+        if (InventoryOverlayUI.Instance != null && InventoryOverlayUI.Instance.IsOpen)
+        {
+            InventoryOverlayUI.Instance.Close();
+            return;
+        }
+
+        TogglePause();
     }
 
     public void TogglePause()

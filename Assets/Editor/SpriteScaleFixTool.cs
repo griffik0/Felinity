@@ -334,7 +334,7 @@ public static class SpriteScaleFixTool
         importer.alphaIsTransparency = true;
         importer.spritePixelsPerUnit = idlePpu;
         importer.isReadable = false;
-        importer.spritesheet = new SpriteMetaData[0];
+        // Single mode replaces any multi-sprite sheet data; do not touch obsolete TextureImporter.spritesheet.
 
         var settings = new TextureImporterSettings();
         importer.ReadTextureSettings(settings);

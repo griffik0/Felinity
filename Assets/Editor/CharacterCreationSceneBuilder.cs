@@ -24,7 +24,7 @@ public static class CharacterCreationSceneBuilder
         Sprite arrowRight = AssetDatabase.LoadAssetAtPath<Sprite>(ArrowRightPath);
 
         var scene = EditorSceneManager.OpenScene(ScenePath);
-        var ui = Object.FindFirstObjectByType<CharacterCreationUI>();
+        var ui = Object.FindAnyObjectByType<CharacterCreationUI>();
         if (ui == null)
         {
             Debug.LogError("[CharacterCreationSceneBuilder] CharacterCreationUI not found.");
@@ -192,7 +192,7 @@ public static class CharacterCreationSceneBuilder
         };
 
         var mainScene = EditorSceneManager.OpenScene("Assets/Scenes/MainWorld.unity", OpenSceneMode.Single);
-        if (Object.FindObjectsByType<MainWorldBootstrap>(FindObjectsSortMode.None).Length == 0)
+        if (Object.FindObjectsByType<MainWorldBootstrap>().Length == 0)
         {
             var boot = new GameObject("MainWorldBootstrap");
             boot.AddComponent<MainWorldBootstrap>();
