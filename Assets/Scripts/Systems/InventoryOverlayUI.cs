@@ -5,26 +5,40 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Full-screen inventory overlay (Tab). Separate from the always-visible bottom-left InventoryUI.
+/// Full-screen inventory overlay (Tab). Stardew-style slot grid.
+/// Separate from the always-visible bottom-left InventoryUI.
 /// Blocks player movement while open, but does not pause time / PauseManager.
 /// </summary>
 public class InventoryOverlayUI : MonoBehaviour
 {
+    public const int DefaultColumns = 6;
+    public const int DefaultRows = 4;
+
     public static InventoryOverlayUI Instance { get; private set; }
 
     [Header("Input")]
     public Key toggleKey = Key.Tab;
 
+    [Header("Grid")]
+    public int columns = DefaultColumns;
+    public int rows = DefaultRows;
+    public InventorySlotUI slotPrefab;
+
     [Header("UI")]
     public GameObject root;
     public TMP_Text titleText;
     public TMP_Text uniqueCountText;
-    public RectTransform listContent;
+    public RectTransform gridRoot;
+    public RectTransform tooltipRoot;
+    public TMP_Text tooltipTitleText;
+    public TMP_Text tooltipBodyText;
 
     public bool IsOpen { get; private set; }
 
     InventorySystem _inventory;
-    readonly List<TMP_Text> _rowPool = new List<TMP_Text>();
+    readonly List<InventorySlotUI> _slots = new List<InventorySlotUI>();
+    InventorySlotUI _tooltipOwner;
+    Canvas _canvas;
 
     void Awake()
     {
@@ -36,6 +50,7 @@ public class InventoryOverlayUI : MonoBehaviour
 
         Instance = this;
         EnsureUi();
+        EnsureSlots();
         SetOpen(false, refresh: false);
     }
 
@@ -56,6 +71,7 @@ public class InventoryOverlayUI : MonoBehaviour
     void OnDisable()
     {
         Unbind();
+        HideTooltip(null);
     }
 
     void Start()
@@ -68,17 +84,17 @@ public class InventoryOverlayUI : MonoBehaviour
     void Update()
     {
         Keyboard kb = Keyboard.current;
-        if (kb == null)
-            return;
+        if (kb != null && kb[toggleKey].wasPressedThisFrame)
+        {
+            // Don't open over the pause menu; still allow closing if somehow open while paused.
+            if (!IsOpen && PauseManager.Instance != null && PauseManager.Instance.IsPaused)
+                return;
 
-        if (!kb[toggleKey].wasPressedThisFrame)
-            return;
+            Toggle();
+        }
 
-        // Don't open over the pause menu; still allow closing if somehow open while paused.
-        if (!IsOpen && PauseManager.Instance != null && PauseManager.Instance.IsPaused)
-            return;
-
-        Toggle();
+        if (_tooltipOwner != null)
+            UpdateTooltipPosition();
     }
 
     public void Toggle()
@@ -102,6 +118,9 @@ public class InventoryOverlayUI : MonoBehaviour
 
         if (root != null)
             root.SetActive(open);
+
+        if (!open)
+            HideTooltip(null);
 
         if (open && refresh)
             Refresh();
@@ -131,82 +150,133 @@ public class InventoryOverlayUI : MonoBehaviour
             _inventory = InventorySystem.Instance;
 
         EnsureUi();
+        EnsureSlots();
 
-        int unique = 0;
-        int row = 0;
-
+        var entries = new List<KeyValuePair<ItemData, int>>();
         if (_inventory != null)
         {
             foreach (var pair in _inventory.Items)
             {
                 if (pair.Key == null || pair.Value <= 0)
                     continue;
-
-                unique++;
-                string itemName = string.IsNullOrEmpty(pair.Key.itemName) ? pair.Key.name : pair.Key.itemName;
-                string line = $"{itemName}  ·  {pair.Key.category}  ·  x{pair.Value}";
-                GetOrCreateRow(row).text = line;
-                GetOrCreateRow(row).gameObject.SetActive(true);
-                row++;
+                entries.Add(pair);
             }
         }
 
-        for (int i = row; i < _rowPool.Count; i++)
-            _rowPool[i].gameObject.SetActive(false);
+        int unique = entries.Count;
+        int capacity = _slots.Count;
+
+        for (int i = 0; i < capacity; i++)
+        {
+            if (i < unique)
+                _slots[i].SetItem(entries[i].Key, entries[i].Value);
+            else
+                _slots[i].Clear();
+        }
 
         if (uniqueCountText != null)
             uniqueCountText.text = unique == 0
                 ? "0 unique items"
                 : $"{unique} unique item{(unique == 1 ? "" : "s")}";
-
-        if (row == 0)
-        {
-            TMP_Text empty = GetOrCreateRow(0);
-            empty.text = "(empty)";
-            empty.gameObject.SetActive(true);
-        }
-
-        if (listContent != null)
-            LayoutRebuilder.ForceRebuildLayoutImmediate(listContent);
     }
 
-    TMP_Text GetOrCreateRow(int index)
+    public void ShowTooltip(InventorySlotUI owner, string title, string description)
     {
-        while (_rowPool.Count <= index)
+        if (tooltipRoot == null || owner == null)
+            return;
+
+        _tooltipOwner = owner;
+        tooltipRoot.gameObject.SetActive(true);
+
+        if (tooltipTitleText != null)
+            tooltipTitleText.text = title ?? string.Empty;
+
+        if (tooltipBodyText != null)
         {
-            var go = new GameObject($"ItemRow_{_rowPool.Count}", typeof(RectTransform));
-            go.transform.SetParent(listContent, false);
-
-            var rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0f, 1f);
-            rt.anchorMax = new Vector2(1f, 1f);
-            rt.pivot = new Vector2(0.5f, 1f);
-
-            var le = go.AddComponent<LayoutElement>();
-            le.minHeight = 32f;
-            le.preferredHeight = 32f;
-            le.flexibleWidth = 1f;
-
-            var tmp = go.AddComponent<TextMeshProUGUI>();
-            tmp.fontSize = 22f;
-            tmp.color = Color.white;
-            tmp.alignment = TextAlignmentOptions.Left;
-            tmp.enableWordWrapping = false;
-            tmp.raycastTarget = false;
-            tmp.text = "";
-
-            _rowPool.Add(tmp);
+            bool hasBody = !string.IsNullOrWhiteSpace(description);
+            tooltipBodyText.gameObject.SetActive(hasBody);
+            tooltipBodyText.text = hasBody ? description : string.Empty;
         }
 
-        return _rowPool[index];
+        UpdateTooltipPosition();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipRoot);
+    }
+
+    public void HideTooltip(InventorySlotUI owner)
+    {
+        if (owner != null && _tooltipOwner != null && owner != _tooltipOwner)
+            return;
+
+        _tooltipOwner = null;
+        if (tooltipRoot != null)
+            tooltipRoot.gameObject.SetActive(false);
+    }
+
+    void UpdateTooltipPosition()
+    {
+        if (tooltipRoot == null || _canvas == null)
+            return;
+
+        Mouse mouse = Mouse.current;
+        if (mouse == null)
+            return;
+
+        Vector2 screen = mouse.position.ReadValue();
+        Camera cam = _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera;
+        RectTransform parent = tooltipRoot.parent as RectTransform;
+        if (parent == null)
+            return;
+
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out Vector2 local))
+            return;
+
+        // Offset so the box sits beside the cursor instead of under it.
+        tooltipRoot.anchoredPosition = local + new Vector2(18f, -18f);
+    }
+
+    void EnsureSlots()
+    {
+        int capacity = Mathf.Max(1, columns) * Mathf.Max(1, rows);
+        while (_slots.Count < capacity)
+        {
+            InventorySlotUI slot = CreateSlot(_slots.Count);
+            _slots.Add(slot);
+        }
+
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            bool active = i < capacity;
+            _slots[i].gameObject.SetActive(active);
+            _slots[i].BindOverlay(this);
+        }
+    }
+
+    InventorySlotUI CreateSlot(int index)
+    {
+        InventorySlotUI slot;
+        if (slotPrefab != null)
+        {
+            slot = Instantiate(slotPrefab, gridRoot);
+            slot.name = $"Slot_{index:00}";
+        }
+        else
+        {
+            slot = BuildSlotRuntime($"Slot_{index:00}", gridRoot);
+        }
+
+        slot.BindOverlay(this);
+        slot.Clear();
+        return slot;
     }
 
     void EnsureUi()
     {
-        if (root != null && listContent != null && titleText != null && uniqueCountText != null)
+        if (root != null && gridRoot != null && titleText != null && uniqueCountText != null && tooltipRoot != null)
+        {
+            _canvas = GetComponentInChildren<Canvas>(true);
             return;
+        }
 
-        // Own overlay canvas so sorting stays above GameUI but below PauseCanvas.
         Transform canvasTf = transform.Find("InventoryOverlayCanvas");
         GameObject canvasGo;
         if (canvasTf == null)
@@ -220,61 +290,93 @@ public class InventoryOverlayUI : MonoBehaviour
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             canvasGo.AddComponent<GraphicRaycaster>();
+            _canvas = canvas;
         }
         else
         {
             canvasGo = canvasTf.gameObject;
+            _canvas = canvasGo.GetComponent<Canvas>();
         }
+
+        // Drop the old text-list ScrollView if a previous version left one around.
+        Transform legacyScroll = root != null
+            ? root.transform.Find("ScrollView")
+            : canvasGo.transform.Find("Panel/ScrollView");
+        if (legacyScroll != null)
+            Destroy(legacyScroll.gameObject);
 
         if (root == null)
         {
-            var panel = CreateRect("Panel", canvasGo.transform);
-            var panelRt = panel.GetComponent<RectTransform>();
-            panelRt.anchorMin = new Vector2(0.5f, 0.5f);
-            panelRt.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRt.pivot = new Vector2(0.5f, 0.5f);
-            panelRt.sizeDelta = new Vector2(560f, 520f);
-            var bg = panel.AddComponent<Image>();
-            bg.color = new Color(0.07f, 0.08f, 0.11f, 0.94f);
-            root = panel;
+            Transform existingPanel = canvasGo.transform.Find("Panel");
+            if (existingPanel != null)
+            {
+                root = existingPanel.gameObject;
+            }
+            else
+            {
+                var panel = CreateRect("Panel", canvasGo.transform);
+                var panelRt = panel.GetComponent<RectTransform>();
+                panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+                panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+                panelRt.pivot = new Vector2(0.5f, 0.5f);
+                panelRt.sizeDelta = new Vector2(620f, 520f);
+                var bg = panel.AddComponent<Image>();
+                bg.color = new Color(0.07f, 0.08f, 0.11f, 0.94f);
+                root = panel;
+            }
         }
 
         if (titleText == null)
         {
-            var titleGo = CreateRect("Title", root.transform);
-            var titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0f, 1f);
-            titleRt.anchorMax = new Vector2(1f, 1f);
-            titleRt.pivot = new Vector2(0.5f, 1f);
-            titleRt.anchoredPosition = new Vector2(0f, -16f);
-            titleRt.sizeDelta = new Vector2(-40f, 40f);
-            titleText = titleGo.AddComponent<TextMeshProUGUI>();
-            titleText.fontSize = 34f;
-            titleText.fontStyle = FontStyles.Bold;
-            titleText.alignment = TextAlignmentOptions.Center;
-            titleText.color = new Color(1f, 0.88f, 0.55f, 1f);
-            titleText.text = "Inventory";
-            titleText.raycastTarget = false;
+            Transform titleTf = root.transform.Find("Title");
+            if (titleTf != null)
+            {
+                titleText = titleTf.GetComponent<TMP_Text>();
+            }
+            else
+            {
+                var titleGo = CreateRect("Title", root.transform);
+                var titleRt = titleGo.GetComponent<RectTransform>();
+                titleRt.anchorMin = new Vector2(0f, 1f);
+                titleRt.anchorMax = new Vector2(1f, 1f);
+                titleRt.pivot = new Vector2(0.5f, 1f);
+                titleRt.anchoredPosition = new Vector2(0f, -16f);
+                titleRt.sizeDelta = new Vector2(-40f, 40f);
+                titleText = titleGo.AddComponent<TextMeshProUGUI>();
+                titleText.fontSize = 34f;
+                titleText.fontStyle = FontStyles.Bold;
+                titleText.alignment = TextAlignmentOptions.Center;
+                titleText.color = new Color(1f, 0.88f, 0.55f, 1f);
+                titleText.text = "Inventory";
+                titleText.raycastTarget = false;
+            }
         }
 
         if (uniqueCountText == null)
         {
-            var countGo = CreateRect("UniqueCount", root.transform);
-            var countRt = countGo.GetComponent<RectTransform>();
-            countRt.anchorMin = new Vector2(0f, 1f);
-            countRt.anchorMax = new Vector2(1f, 1f);
-            countRt.pivot = new Vector2(0.5f, 1f);
-            countRt.anchoredPosition = new Vector2(0f, -56f);
-            countRt.sizeDelta = new Vector2(-40f, 28f);
-            uniqueCountText = countGo.AddComponent<TextMeshProUGUI>();
-            uniqueCountText.fontSize = 20f;
-            uniqueCountText.alignment = TextAlignmentOptions.Center;
-            uniqueCountText.color = new Color(0.75f, 0.78f, 0.85f, 1f);
-            uniqueCountText.text = "0 unique items";
-            uniqueCountText.raycastTarget = false;
+            Transform countTf = root.transform.Find("UniqueCount");
+            if (countTf != null)
+            {
+                uniqueCountText = countTf.GetComponent<TMP_Text>();
+            }
+            else
+            {
+                var countGo = CreateRect("UniqueCount", root.transform);
+                var countRt = countGo.GetComponent<RectTransform>();
+                countRt.anchorMin = new Vector2(0f, 1f);
+                countRt.anchorMax = new Vector2(1f, 1f);
+                countRt.pivot = new Vector2(0.5f, 1f);
+                countRt.anchoredPosition = new Vector2(0f, -56f);
+                countRt.sizeDelta = new Vector2(-40f, 28f);
+                uniqueCountText = countGo.AddComponent<TextMeshProUGUI>();
+                uniqueCountText.fontSize = 20f;
+                uniqueCountText.alignment = TextAlignmentOptions.Center;
+                uniqueCountText.color = new Color(0.75f, 0.78f, 0.85f, 1f);
+                uniqueCountText.text = "0 unique items";
+                uniqueCountText.raycastTarget = false;
+            }
         }
 
-        // Hint line
         if (root.transform.Find("Hint") == null)
         {
             var hintGo = CreateRect("Hint", root.transform);
@@ -292,52 +394,126 @@ public class InventoryOverlayUI : MonoBehaviour
             hint.raycastTarget = false;
         }
 
-        if (listContent == null)
+        if (gridRoot == null)
         {
-            var scrollGo = CreateRect("ScrollView", root.transform);
-            var scrollRt = scrollGo.GetComponent<RectTransform>();
-            scrollRt.anchorMin = new Vector2(0f, 0f);
-            scrollRt.anchorMax = new Vector2(1f, 1f);
-            scrollRt.offsetMin = new Vector2(20f, 44f);
-            scrollRt.offsetMax = new Vector2(-20f, -96f);
+            Transform existingGrid = root.transform.Find("SlotGrid");
+            if (existingGrid != null)
+            {
+                gridRoot = existingGrid.GetComponent<RectTransform>();
+            }
+            else
+            {
+                var gridGo = CreateRect("SlotGrid", root.transform);
+                gridRoot = gridGo.GetComponent<RectTransform>();
+                gridRoot.anchorMin = new Vector2(0f, 0f);
+                gridRoot.anchorMax = new Vector2(1f, 1f);
+                gridRoot.offsetMin = new Vector2(28f, 48f);
+                gridRoot.offsetMax = new Vector2(-28f, -96f);
 
-            var scroll = scrollGo.AddComponent<ScrollRect>();
-            scroll.horizontal = false;
-            scroll.vertical = true;
-            scroll.movementType = ScrollRect.MovementType.Clamped;
-            scroll.scrollSensitivity = 30f;
+                var grid = gridGo.AddComponent<GridLayoutGroup>();
+                grid.cellSize = new Vector2(72f, 72f);
+                grid.spacing = new Vector2(10f, 10f);
+                grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+                grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+                grid.childAlignment = TextAnchor.UpperCenter;
+                grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                grid.constraintCount = Mathf.Max(1, columns);
+            }
+        }
 
-            var viewport = CreateRect("Viewport", scrollGo.transform);
-            var viewportRt = viewport.GetComponent<RectTransform>();
-            StretchFull(viewportRt);
-            viewport.AddComponent<RectMask2D>();
-            var viewportImg = viewport.AddComponent<Image>();
-            viewportImg.color = new Color(1f, 1f, 1f, 0.02f);
+        if (tooltipRoot == null)
+        {
+            // Parent to canvas so tooltip can follow the cursor outside the panel.
+            var tipGo = CreateRect("Tooltip", canvasGo.transform);
+            tooltipRoot = tipGo.GetComponent<RectTransform>();
+            tooltipRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            tooltipRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            tooltipRoot.pivot = new Vector2(0f, 1f);
+            tooltipRoot.sizeDelta = new Vector2(240f, 0f);
 
-            var content = CreateRect("Content", viewport.transform);
-            listContent = content.GetComponent<RectTransform>();
-            listContent.anchorMin = new Vector2(0f, 1f);
-            listContent.anchorMax = new Vector2(1f, 1f);
-            listContent.pivot = new Vector2(0.5f, 1f);
-            listContent.anchoredPosition = Vector2.zero;
-            listContent.sizeDelta = new Vector2(0f, 0f);
+            var tipBg = tipGo.AddComponent<Image>();
+            tipBg.color = new Color(0.05f, 0.06f, 0.08f, 0.96f);
+            tipBg.raycastTarget = false;
 
-            var vlg = content.AddComponent<VerticalLayoutGroup>();
-            vlg.childAlignment = TextAnchor.UpperLeft;
-            vlg.childControlHeight = true;
-            vlg.childControlWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childForceExpandWidth = true;
+            var vlg = tipGo.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(12, 12, 10, 10);
             vlg.spacing = 4f;
-            vlg.padding = new RectOffset(8, 8, 4, 4);
+            vlg.childAlignment = TextAnchor.UpperLeft;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
 
-            var fitter = content.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            var fitter = tipGo.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            scroll.viewport = viewportRt;
-            scroll.content = listContent;
+            var titleGo = CreateRect("TooltipTitle", tipGo.transform);
+            tooltipTitleText = titleGo.AddComponent<TextMeshProUGUI>();
+            tooltipTitleText.fontSize = 20f;
+            tooltipTitleText.fontStyle = FontStyles.Bold;
+            tooltipTitleText.color = new Color(1f, 0.88f, 0.55f, 1f);
+            tooltipTitleText.alignment = TextAlignmentOptions.Left;
+            tooltipTitleText.raycastTarget = false;
+            tooltipTitleText.textWrappingMode = TextWrappingModes.NoWrap;
+            var titleLe = titleGo.AddComponent<LayoutElement>();
+            titleLe.minWidth = 160f;
+
+            var bodyGo = CreateRect("TooltipBody", tipGo.transform);
+            tooltipBodyText = bodyGo.AddComponent<TextMeshProUGUI>();
+            tooltipBodyText.fontSize = 16f;
+            tooltipBodyText.color = new Color(0.85f, 0.87f, 0.92f, 1f);
+            tooltipBodyText.alignment = TextAlignmentOptions.Left;
+            tooltipBodyText.raycastTarget = false;
+            tooltipBodyText.textWrappingMode = TextWrappingModes.Normal;
+            var bodyLe = bodyGo.AddComponent<LayoutElement>();
+            bodyLe.preferredWidth = 220f;
+
+            tipGo.SetActive(false);
         }
+    }
+
+    public static InventorySlotUI BuildSlotRuntime(string name, Transform parent)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+
+        var bg = go.AddComponent<Image>();
+        bg.color = new Color(0.18f, 0.19f, 0.23f, 1f);
+        bg.raycastTarget = true;
+
+        var slot = go.AddComponent<InventorySlotUI>();
+        slot.backgroundImage = bg;
+
+        var iconGo = CreateRect("Icon", go.transform);
+        var iconRt = iconGo.GetComponent<RectTransform>();
+        iconRt.anchorMin = new Vector2(0.5f, 0.5f);
+        iconRt.anchorMax = new Vector2(0.5f, 0.5f);
+        iconRt.pivot = new Vector2(0.5f, 0.5f);
+        iconRt.sizeDelta = new Vector2(48f, 48f);
+        var icon = iconGo.AddComponent<Image>();
+        icon.raycastTarget = false;
+        icon.preserveAspect = true;
+        slot.iconImage = icon;
+
+        var countGo = CreateRect("Count", go.transform);
+        var countRt = countGo.GetComponent<RectTransform>();
+        countRt.anchorMin = new Vector2(1f, 0f);
+        countRt.anchorMax = new Vector2(1f, 0f);
+        countRt.pivot = new Vector2(1f, 0f);
+        countRt.anchoredPosition = new Vector2(-4f, 2f);
+        countRt.sizeDelta = new Vector2(48f, 22f);
+        var count = countGo.AddComponent<TextMeshProUGUI>();
+        count.fontSize = 16f;
+        count.fontStyle = FontStyles.Bold;
+        count.alignment = TextAlignmentOptions.BottomRight;
+        count.color = Color.white;
+        count.raycastTarget = false;
+        count.textWrappingMode = TextWrappingModes.NoWrap;
+        slot.countText = count;
+        countGo.SetActive(false);
+
+        return slot;
     }
 
     static GameObject CreateRect(string name, Transform parent)
@@ -345,14 +521,5 @@ public class InventoryOverlayUI : MonoBehaviour
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
         return go;
-    }
-
-    static void StretchFull(RectTransform rt)
-    {
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
-        rt.pivot = new Vector2(0.5f, 0.5f);
     }
 }

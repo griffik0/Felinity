@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// Displays the in-game clock from DayNightCycle in the top-right corner.
+/// Displays the in-game clock from DayNightCycle at the top-center of the screen.
 /// </summary>
 public class GameClockUI : MonoBehaviour
 {

@@ -15,4 +15,5 @@ public class ItemData : ScriptableObject
     [TextArea(1, 3)]
     public string description;
     public ItemCategory category = ItemCategory.Herb;
+    public Sprite icon;
 }
