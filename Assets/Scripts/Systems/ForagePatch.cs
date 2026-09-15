@@ -2,12 +2,14 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Placeholder forage patch — grants a random inventory item, then respawns.
+/// Forage bush: spawns a world ItemPickup, then hides and respawns.
 /// </summary>
 public class ForagePatch : MonoBehaviour, IInteractable
 {
     public float respawnSeconds = 30f;
     public ItemData[] possibleDrops;
+    public ItemPickup itemPickupPrefab;
+    public float spawnJitter = 0.15f;
 
     bool _available = true;
 
@@ -21,19 +23,10 @@ public class ForagePatch : MonoBehaviour, IInteractable
             return;
 
         ItemData found = PickDrop();
-        if (found != null && InventorySystem.Instance != null)
-        {
-            InventorySystem.Instance.AddItem(found);
-            string name = string.IsNullOrEmpty(found.itemName) ? found.name : found.itemName;
-            Debug.Log($"Found {name}!");
-
-            if (QuestManager.Instance != null)
-                QuestManager.Instance.ReportItemCollected(found);
-        }
+        if (found != null)
+            SpawnPickup(found, 1);
         else
-        {
-            Debug.Log("Found some catnip!");
-        }
+            Debug.Log("Nothing useful in this bush.");
 
         _available = false;
         SetPresent(false);
@@ -42,6 +35,41 @@ public class ForagePatch : MonoBehaviour, IInteractable
             QuestManager.Instance.ReportForage();
 
         StartCoroutine(RespawnRoutine());
+    }
+
+    void SpawnPickup(ItemData found, int amount)
+    {
+        Vector3 spawnPos = transform.position;
+        if (spawnJitter > 0f)
+        {
+            spawnPos += new Vector3(
+                Random.Range(-spawnJitter, spawnJitter),
+                Random.Range(-spawnJitter, spawnJitter),
+                0f);
+        }
+
+        ItemPickup pickup;
+        if (itemPickupPrefab != null)
+        {
+            pickup = Instantiate(itemPickupPrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            // Runtime fallback so foraging still works if the prefab ref was never wired.
+            var go = new GameObject("ItemPickup");
+            go.transform.position = spawnPos;
+            go.transform.localScale = new Vector3(1.35f, 1.35f, 1f);
+            go.AddComponent<SpriteRenderer>();
+            var col = go.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            col.radius = 0.25f;
+            pickup = go.AddComponent<ItemPickup>();
+        }
+
+        pickup.Setup(found, amount);
+
+        string name = string.IsNullOrEmpty(found.itemName) ? found.name : found.itemName;
+        Debug.Log($"Foraged {name} — pickup spawned.");
     }
 
     ItemData PickDrop()

@@ -15,3 +15,4 @@ MonoBehaviour:
   itemName: Catnip
   description: A fragrant herb cats love to nibble.
   category: 0
+  icon: {fileID: 21300000, guid: 828eb8e6ba9599f4c9b610fb00be6619, type: 3}

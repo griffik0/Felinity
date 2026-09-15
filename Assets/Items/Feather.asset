@@ -15,3 +15,4 @@ MonoBehaviour:
   itemName: Feather
   description: A soft feather perfect for batting around.
   category: 0
+  icon: {fileID: 21300000, guid: 789a3f0fc523345448dbd8aadba966f0, type: 3}

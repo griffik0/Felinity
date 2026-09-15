@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Full-screen inventory overlay (Tab). Stardew-style slot grid.
-/// Separate from the always-visible bottom-left InventoryUI.
+/// Pickup feedback uses PickupPopupUI; this is the Tab-toggle bag.
 /// Blocks player movement while open, but does not pause time / PauseManager.
 /// </summary>
 public class InventoryOverlayUI : MonoBehaviour

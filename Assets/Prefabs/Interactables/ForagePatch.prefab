@@ -328,3 +328,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b158145d6f18aa644b285c260f000a23, type: 2}
   - {fileID: 11400000, guid: a94b44ba66d335d40962db8cdd280ad2, type: 2}
   - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
+  itemPickupPrefab: {fileID: 4616279267417052714, guid: bc84660c20bd94e458a19d43da5545ad, type: 3}
+  spawnJitter: 0.15
