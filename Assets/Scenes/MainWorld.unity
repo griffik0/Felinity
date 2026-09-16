@@ -267,6 +267,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
   itemPickupPrefab: {fileID: 4616279267417052714, guid: bc84660c20bd94e458a19d43da5545ad, type: 3}
   spawnJitter: 0.15
+  saveId: ForagePatch4
 --- !u!58 &114857864
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1492,6 +1493,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
   itemPickupPrefab: {fileID: 4616279267417052714, guid: bc84660c20bd94e458a19d43da5545ad, type: 3}
   spawnJitter: 0.15
+  saveId: ForagePatch
 --- !u!58 &495233494
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2035,7 +2037,7 @@ SpriteRenderer:
   m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!4 &655296403
 Transform:
@@ -3340,6 +3342,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
   itemPickupPrefab: {fileID: 4616279267417052714, guid: bc84660c20bd94e458a19d43da5545ad, type: 3}
   spawnJitter: 0.15
+  saveId: ForagePatch3
 --- !u!58 &1003253501
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3527,7 +3530,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit Game
+  m_text: Save and Quit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4928,7 +4931,7 @@ GameObject:
   - component: {fileID: 1615069095}
   - component: {fileID: 1615069094}
   m_Layer: 0
-  m_Name: QuitGameButton
+  m_Name: SaveAndQuitButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5211,8 +5214,13 @@ MonoBehaviour:
   pauseCanvas: {fileID: 1927294586}
   resumeButton: {fileID: 1596735757}
   quitToTitleButton: {fileID: 949381162}
-  quitGameButton: {fileID: 1615069094}
+  saveAndQuitButton: {fileID: 1615069094}
   pausedLabel: {fileID: 617076258}
+  savePromptRoot: {fileID: 0}
+  savePromptText: {fileID: 0}
+  savePromptYesButton: {fileID: 0}
+  savePromptNoButton: {fileID: 0}
+  quitGameButton: {fileID: 1615069094}
 --- !u!4 &1721543292
 Transform:
   m_ObjectHideFlags: 0
@@ -5471,6 +5479,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
   itemPickupPrefab: {fileID: 4616279267417052714, guid: bc84660c20bd94e458a19d43da5545ad, type: 3}
   spawnJitter: 0.15
+  saveId: ForagePatch2
 --- !u!58 &1861806991
 CircleCollider2D:
   m_ObjectHideFlags: 0

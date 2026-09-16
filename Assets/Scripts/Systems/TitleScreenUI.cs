@@ -20,6 +20,7 @@ public class TitleScreenUI : MonoBehaviour
             titleText.text = GameFlow.GameTitle;
 
         EnsureContinueButton();
+        LayoutContinueBetweenStartAndQuit();
         RefreshContinueVisibility();
 
         if (startButton != null)
@@ -43,6 +44,7 @@ public class TitleScreenUI : MonoBehaviour
 
     void OnEnable()
     {
+        LayoutContinueBetweenStartAndQuit();
         RefreshContinueVisibility();
     }
 
@@ -51,7 +53,6 @@ public class TitleScreenUI : MonoBehaviour
         if (SFXManager.Instance != null)
             SFXManager.Instance.PlayButtonClick();
 
-        // Fresh run: discard any existing save so Continue won't restore the old one.
         if (SaveManager.Instance != null)
             SaveManager.Instance.BeginNewGame();
 
@@ -91,7 +92,6 @@ public class TitleScreenUI : MonoBehaviour
         if (continueButton != null || startButton == null)
             return;
 
-        // Clone Start Game so layout/style match without hand-editing the scene.
         GameObject clone = Instantiate(startButton.gameObject, startButton.transform.parent);
         clone.name = "ContinueButton";
 
@@ -103,11 +103,6 @@ public class TitleScreenUI : MonoBehaviour
             rt.anchorMax = startRt.anchorMax;
             rt.pivot = startRt.pivot;
             rt.sizeDelta = startRt.sizeDelta;
-            // Sit between Start and Quit: nudge Start up, Continue in the old Start spot, Quit stays.
-            Vector2 startPos = startRt.anchoredPosition;
-            float gap = Mathf.Max(72f, startRt.sizeDelta.y + 16f);
-            startRt.anchoredPosition = startPos + new Vector2(0f, gap * 0.5f);
-            rt.anchoredPosition = startPos - new Vector2(0f, gap * 0.5f);
         }
 
         TMP_Text label = clone.GetComponentInChildren<TMP_Text>(true);
@@ -116,5 +111,35 @@ public class TitleScreenUI : MonoBehaviour
 
         continueButton = clone.GetComponent<Button>();
         clone.SetActive(false);
+    }
+
+    void LayoutContinueBetweenStartAndQuit()
+    {
+        if (startButton == null || quitButton == null)
+            return;
+
+        var startRt = startButton.GetComponent<RectTransform>();
+        var quitRt = quitButton.GetComponent<RectTransform>();
+        if (startRt == null || quitRt == null)
+            return;
+
+        // Keep a clear vertical gap between all three buttons.
+        const float spacing = 100f;
+        Vector2 center = (startRt.anchoredPosition + quitRt.anchoredPosition) * 0.5f;
+        // Prefer a fixed column around the current Start X.
+        float x = startRt.anchoredPosition.x;
+
+        startRt.anchoredPosition = new Vector2(x, center.y + spacing);
+        quitRt.anchoredPosition = new Vector2(x, center.y - spacing);
+
+        if (continueButton == null)
+            return;
+
+        var continueRt = continueButton.GetComponent<RectTransform>();
+        if (continueRt == null)
+            return;
+
+        continueRt.anchoredPosition = new Vector2(x, center.y);
+        continueRt.sizeDelta = startRt.sizeDelta;
     }
 }

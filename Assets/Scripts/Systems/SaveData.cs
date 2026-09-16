@@ -30,6 +30,8 @@ public class SaveData
     public List<SaveSlotEntry> generalSlots = new List<SaveSlotEntry>();
 
     public List<SaveQuestEntry> quests = new List<SaveQuestEntry>();
+
+    public List<SaveForageEntry> foragePatches = new List<SaveForageEntry>();
 }
 
 [Serializable]
@@ -46,4 +48,12 @@ public class SaveQuestEntry
     public int progress;
     public bool completed;
     public bool active;
+}
+
+[Serializable]
+public class SaveForageEntry
+{
+    public string saveId;
+    public float respawnRemaining;
+    public bool available;
 }

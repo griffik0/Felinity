@@ -3,6 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Forage bush: spawns a world ItemPickup, then hides and respawns.
+/// Tracks remaining respawn time for save/load.
 /// </summary>
 public class ForagePatch : MonoBehaviour, IInteractable
 {
@@ -11,7 +12,27 @@ public class ForagePatch : MonoBehaviour, IInteractable
     public ItemPickup itemPickupPrefab;
     public float spawnJitter = 0.15f;
 
+    [Tooltip("Stable id for save/load. Defaults to GameObject name.")]
+    public string saveId;
+
     bool _available = true;
+    float _respawnRemaining;
+    Coroutine _respawnRoutine;
+
+    public bool IsAvailable => _available;
+
+    /// <summary>Seconds left until respawn; 0 if available.</summary>
+    public float RespawnRemainingSeconds => _available ? 0f : Mathf.Max(0f, _respawnRemaining);
+
+    public string SaveId
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(saveId))
+                return saveId;
+            return gameObject.name;
+        }
+    }
 
     public string GetInteractionPrompt() => "Forage";
 
@@ -31,13 +52,46 @@ public class ForagePatch : MonoBehaviour, IInteractable
         else
             Debug.Log("Nothing useful in this bush.");
 
-        _available = false;
-        SetPresent(false);
+        BeginDepleted(respawnSeconds);
 
         if (QuestManager.Instance != null)
             QuestManager.Instance.ReportForage();
+    }
 
-        StartCoroutine(RespawnRoutine());
+    /// <summary>Restore depleted/available state from a save (remaining &lt;= 0 → available).</summary>
+    public void ApplySavedRespawn(float remainingSeconds)
+    {
+        if (remainingSeconds <= 0.01f)
+        {
+            ForceAvailable();
+            return;
+        }
+
+        BeginDepleted(remainingSeconds);
+    }
+
+    void BeginDepleted(float remaining)
+    {
+        _available = false;
+        SetPresent(false);
+        _respawnRemaining = Mathf.Max(0.01f, remaining);
+
+        if (_respawnRoutine != null)
+            StopCoroutine(_respawnRoutine);
+        _respawnRoutine = StartCoroutine(RespawnRoutine());
+    }
+
+    void ForceAvailable()
+    {
+        if (_respawnRoutine != null)
+        {
+            StopCoroutine(_respawnRoutine);
+            _respawnRoutine = null;
+        }
+
+        _respawnRemaining = 0f;
+        _available = true;
+        SetPresent(true);
     }
 
     void SpawnPickup(ItemData found, int amount)
@@ -58,7 +112,6 @@ public class ForagePatch : MonoBehaviour, IInteractable
         }
         else
         {
-            // Runtime fallback so foraging still works if the prefab ref was never wired.
             var go = new GameObject("ItemPickup");
             go.transform.position = spawnPos;
             go.transform.localScale = new Vector3(1.35f, 1.35f, 1f);
@@ -86,9 +139,16 @@ public class ForagePatch : MonoBehaviour, IInteractable
 
     IEnumerator RespawnRoutine()
     {
-        yield return new WaitForSeconds(respawnSeconds);
+        while (_respawnRemaining > 0f)
+        {
+            _respawnRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        _respawnRemaining = 0f;
         _available = true;
         SetPresent(true);
+        _respawnRoutine = null;
     }
 
     void SetPresent(bool present)

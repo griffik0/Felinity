@@ -19,6 +19,7 @@ public class SaveManager : MonoBehaviour
     public static SaveManager Instance { get; private set; }
 
     public const string SaveFileName = "savefile.json";
+    public const string CommittedSaveFileName = "savefile.committed.json";
     public const Key DebugSaveKey = Key.F5;
 
     [Header("Item lookup (assign all ItemData assets)")]
@@ -33,6 +34,9 @@ public class SaveManager : MonoBehaviour
 
     public static string SavePath =>
         Path.Combine(Application.persistentDataPath, SaveFileName);
+
+    public static string CommittedSavePath =>
+        Path.Combine(Application.persistentDataPath, CommittedSaveFileName);
 
     void Awake()
     {
@@ -73,15 +77,17 @@ public class SaveManager : MonoBehaviour
         Keyboard kb = Keyboard.current;
         if (kb != null && kb[DebugSaveKey].wasPressedThisFrame)
         {
-            Save();
-            Debug.Log($"[SaveManager] Debug save (F5) → {SavePath}");
+            CommitSave();
+            Debug.Log($"[SaveManager] Debug commit save (F5) → {SavePath}");
         }
     }
 
     void OnApplicationQuit()
     {
+        // Autosave on force-quit so progress isn't lost unless the player
+        // explicitly discarded autosaves via Quit to Title → No.
         if (!_suppressAutoSave)
-            Save();
+            AutoSave();
     }
 
     public bool HasSaveFile()
@@ -89,8 +95,13 @@ public class SaveManager : MonoBehaviour
         return File.Exists(SavePath);
     }
 
+    public bool HasCommittedSaveFile()
+    {
+        return File.Exists(CommittedSavePath);
+    }
+
     /// <summary>
-    /// Fresh play: wipe existing save so Continue won't restore the old run.
+    /// Fresh play: wipe working + committed saves so Continue won't restore an old run.
     /// </summary>
     public void BeginNewGame()
     {
@@ -101,14 +112,20 @@ public class SaveManager : MonoBehaviour
 
     public void DeleteSaveFile()
     {
+        TryDelete(SavePath);
+        TryDelete(CommittedSavePath);
+    }
+
+    static void TryDelete(string path)
+    {
         try
         {
-            if (File.Exists(SavePath))
-                File.Delete(SavePath);
+            if (File.Exists(path))
+                File.Delete(path);
         }
         catch (Exception ex)
         {
-            Debug.LogWarning($"[SaveManager] Could not delete save: {ex.Message}");
+            Debug.LogWarning($"[SaveManager] Could not delete '{path}': {ex.Message}");
         }
     }
 
@@ -127,12 +144,50 @@ public class SaveManager : MonoBehaviour
         GameFlow.LoadMainWorld();
     }
 
-    public void Save()
+    /// <summary>
+    /// Working autosave (pause / quest / tree / quit). Overwrites savefile.json only.
+    /// </summary>
+    public void AutoSave() => SaveInternal(commit: false);
+
+    /// <summary>
+    /// Intentional save the player wants to keep (Save and Quit / Quit to Title → Yes).
+    /// Writes working save and copies it to the committed backup.
+    /// </summary>
+    public void CommitSave() => SaveInternal(commit: true);
+
+    /// <summary>Alias used by older call sites — treats as autosave.</summary>
+    public void Save() => AutoSave();
+
+    /// <summary>
+    /// Discard working autosaves and restore the last committed save (if any).
+    /// If there was never a committed save, deletes the working file.
+    /// </summary>
+    public void DiscardAutosavesAndRestoreCommitted()
+    {
+        try
+        {
+            if (HasCommittedSaveFile())
+            {
+                File.Copy(CommittedSavePath, SavePath, overwrite: true);
+                Debug.Log("[SaveManager] Discarded autosaves — restored last committed save.");
+            }
+            else
+            {
+                TryDelete(SavePath);
+                Debug.Log("[SaveManager] Discarded autosaves — no committed save to restore.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[SaveManager] Failed to restore committed save: {ex}");
+        }
+    }
+
+    void SaveInternal(bool commit)
     {
         if (_suppressAutoSave)
             return;
 
-        // Only persist meaningful world state from MainWorld (or while already mid-session).
         if (SceneManager.GetActiveScene().name != GameFlow.MainSceneName &&
             InventorySystem.Instance == null)
             return;
@@ -142,7 +197,16 @@ public class SaveManager : MonoBehaviour
             SaveData data = Capture();
             string json = JsonUtility.ToJson(data, prettyPrint: true);
             File.WriteAllText(SavePath, json);
-            Debug.Log($"[SaveManager] Saved → {SavePath}");
+
+            if (commit)
+            {
+                File.WriteAllText(CommittedSavePath, json);
+                Debug.Log($"[SaveManager] Committed save → {SavePath}");
+            }
+            else
+            {
+                Debug.Log($"[SaveManager] Autosave → {SavePath}");
+            }
         }
         catch (Exception ex)
         {
@@ -247,17 +311,17 @@ public class SaveManager : MonoBehaviour
     void HandlePauseChanged(bool paused)
     {
         if (paused)
-            Save();
+            AutoSave();
     }
 
     void HandleQuestCompleted(QuestData _)
     {
-        Save();
+        AutoSave();
     }
 
     void HandleTierUpgraded()
     {
-        Save();
+        AutoSave();
     }
 
     SaveData Capture()
@@ -298,7 +362,28 @@ public class SaveManager : MonoBehaviour
 
         CaptureInventory(data);
         CaptureQuests(data);
+        CaptureForagePatches(data);
         return data;
+    }
+
+    void CaptureForagePatches(SaveData data)
+    {
+        data.foragePatches = new List<SaveForageEntry>();
+        ForagePatch[] patches = UnityEngine.Object.FindObjectsByType<ForagePatch>(
+            FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < patches.Length; i++)
+        {
+            ForagePatch patch = patches[i];
+            if (patch == null)
+                continue;
+
+            data.foragePatches.Add(new SaveForageEntry
+            {
+                saveId = patch.SaveId,
+                available = patch.IsAvailable,
+                respawnRemaining = patch.RespawnRemainingSeconds
+            });
+        }
     }
 
     void CaptureInventory(SaveData data)
@@ -453,6 +538,41 @@ public class SaveManager : MonoBehaviour
 
         // Quests (First Scratch etc.)
         ApplyQuests(data);
+
+        // Forage bush respawn timers
+        ApplyForagePatches(data);
+    }
+
+    void ApplyForagePatches(SaveData data)
+    {
+        if (data.foragePatches == null || data.foragePatches.Count == 0)
+            return;
+
+        ForagePatch[] patches = UnityEngine.Object.FindObjectsByType<ForagePatch>(
+            FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var byId = new Dictionary<string, ForagePatch>();
+        for (int i = 0; i < patches.Length; i++)
+        {
+            if (patches[i] == null)
+                continue;
+            string id = patches[i].SaveId;
+            if (!string.IsNullOrEmpty(id) && !byId.ContainsKey(id))
+                byId[id] = patches[i];
+        }
+
+        for (int i = 0; i < data.foragePatches.Count; i++)
+        {
+            SaveForageEntry entry = data.foragePatches[i];
+            if (entry == null || string.IsNullOrEmpty(entry.saveId))
+                continue;
+            if (!byId.TryGetValue(entry.saveId, out ForagePatch patch) || patch == null)
+                continue;
+
+            if (entry.available)
+                patch.ApplySavedRespawn(0f);
+            else
+                patch.ApplySavedRespawn(entry.respawnRemaining);
+        }
     }
 
     void ApplySlots(List<SaveSlotEntry> slots, bool toolbar)
