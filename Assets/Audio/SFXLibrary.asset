@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb505bcd1e6f5c489cfbdc3eaa6fb98, type: 3}
+  m_Name: SFXLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SFXLibrary
+  scratch: {fileID: 0}
+  forage:
+  - {fileID: 8300000, guid: fba047c2d4a594e4dac576920fe6ed78, type: 3}
+  - {fileID: 8300000, guid: b9b2cf9d58ae4bb40a36cb4eb411df8a, type: 3}
+  - {fileID: 8300000, guid: 4f059279ed1fa9143a80d2eb5b075ed3, type: 3}
+  - {fileID: 8300000, guid: 8e7f183d90222924593e87774242e65a, type: 3}
+  itemPickupChime: {fileID: 8300000, guid: c44998acec9c7b849b69f70f4254d0d9, type: 3}
+  itemPickupChimeVolume: 0.35
+  footstepA: {fileID: 0}
+  footstepB: {fileID: 0}
+  treeUpgrade: {fileID: 8300000, guid: 452b599acbf2a7a4cabf5940ce5224b0, type: 3}
+  catCoinGain: {fileID: 8300000, guid: 9164776b0b232e8478bcc909a3fe8e98, type: 3}
+  questComplete: {fileID: 8300000, guid: 772d0c155bfdc214e9037469801977aa, type: 3}
+  dialogueAdvance: {fileID: 0}
+  buttonClick: {fileID: 0}
+  toolbarSwitch: {fileID: 0}
+  inventoryOpen: {fileID: 0}
+  inventoryClose: {fileID: 0}
+  pauseOpen: {fileID: 0}
+  pauseClose: {fileID: 0}

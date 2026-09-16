@@ -110,6 +110,9 @@ public class DialogueUI : MonoBehaviour
         if (!IsOpen)
             return;
 
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayDialogueAdvance();
+
         _index++;
         if (_index >= _queue.Count)
         {

@@ -5,9 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Full-screen inventory overlay (Tab). Stardew-style slot grid.
-/// Pickup feedback uses PickupPopupUI; this is the Tab-toggle bag.
-/// Blocks player movement while open, but does not pause time / PauseManager.
+/// Full-screen inventory overlay (Tab): toolbar strip + general bag grid.
 /// </summary>
 public class InventoryOverlayUI : MonoBehaviour
 {
@@ -28,6 +26,7 @@ public class InventoryOverlayUI : MonoBehaviour
     public GameObject root;
     public TMP_Text titleText;
     public TMP_Text uniqueCountText;
+    public RectTransform toolbarRoot;
     public RectTransform gridRoot;
     public RectTransform tooltipRoot;
     public TMP_Text tooltipTitleText;
@@ -36,7 +35,8 @@ public class InventoryOverlayUI : MonoBehaviour
     public bool IsOpen { get; private set; }
 
     InventorySystem _inventory;
-    readonly List<InventorySlotUI> _slots = new List<InventorySlotUI>();
+    readonly List<InventorySlotUI> _toolbarSlots = new List<InventorySlotUI>();
+    readonly List<InventorySlotUI> _generalSlots = new List<InventorySlotUI>();
     InventorySlotUI _tooltipOwner;
     Canvas _canvas;
 
@@ -86,7 +86,6 @@ public class InventoryOverlayUI : MonoBehaviour
         Keyboard kb = Keyboard.current;
         if (kb != null && kb[toggleKey].wasPressedThisFrame)
         {
-            // Don't open over the pause menu; still allow closing if somehow open while paused.
             if (!IsOpen && PauseManager.Instance != null && PauseManager.Instance.IsPaused)
                 return;
 
@@ -97,23 +96,13 @@ public class InventoryOverlayUI : MonoBehaviour
             UpdateTooltipPosition();
     }
 
-    public void Toggle()
-    {
-        SetOpen(!IsOpen);
-    }
-
-    public void Open()
-    {
-        SetOpen(true);
-    }
-
-    public void Close()
-    {
-        SetOpen(false);
-    }
+    public void Toggle() => SetOpen(!IsOpen);
+    public void Open() => SetOpen(true);
+    public void Close() => SetOpen(false);
 
     public void SetOpen(bool open, bool refresh = true)
     {
+        bool changed = IsOpen != open;
         IsOpen = open;
 
         if (root != null)
@@ -124,6 +113,14 @@ public class InventoryOverlayUI : MonoBehaviour
 
         if (open && refresh)
             Refresh();
+
+        if (changed && SFXManager.Instance != null)
+        {
+            if (open)
+                SFXManager.Instance.PlayInventoryOpen();
+            else
+                SFXManager.Instance.PlayInventoryClose();
+        }
     }
 
     void Bind()
@@ -131,11 +128,11 @@ public class InventoryOverlayUI : MonoBehaviour
         if (_inventory == null)
             _inventory = InventorySystem.Instance;
 
-        if (_inventory == null)
-            return;
-
-        _inventory.OnInventoryChanged -= Refresh;
-        _inventory.OnInventoryChanged += Refresh;
+        if (_inventory != null)
+        {
+            _inventory.OnInventoryChanged -= Refresh;
+            _inventory.OnInventoryChanged += Refresh;
+        }
     }
 
     void Unbind()
@@ -152,32 +149,41 @@ public class InventoryOverlayUI : MonoBehaviour
         EnsureUi();
         EnsureSlots();
 
-        var entries = new List<KeyValuePair<ItemData, int>>();
-        if (_inventory != null)
+        // Toolbar strip (no equipped/selection highlight in the overlay).
+        var toolbar = _inventory != null ? _inventory.ToolbarSlots : null;
+        for (int i = 0; i < _toolbarSlots.Count; i++)
         {
-            foreach (var pair in _inventory.Items)
+            InventorySlotEntry entry = toolbar != null && i < toolbar.Count ? toolbar[i] : null;
+            if (entry != null && !entry.IsEmpty)
+                _toolbarSlots[i].SetItem(entry.item, entry.count);
+            else
+                _toolbarSlots[i].Clear();
+        }
+
+        // General bag only
+        var general = _inventory != null ? _inventory.GeneralSlots : null;
+        int filledGeneral = 0;
+        for (int i = 0; i < _generalSlots.Count; i++)
+        {
+            InventorySlotEntry entry = general != null && i < general.Count ? general[i] : null;
+            if (entry != null && !entry.IsEmpty)
             {
-                if (pair.Key == null || pair.Value <= 0)
-                    continue;
-                entries.Add(pair);
+                _generalSlots[i].SetItem(entry.item, entry.count);
+                filledGeneral++;
+            }
+            else
+            {
+                _generalSlots[i].Clear();
             }
         }
 
-        int unique = entries.Count;
-        int capacity = _slots.Count;
-
-        for (int i = 0; i < capacity; i++)
-        {
-            if (i < unique)
-                _slots[i].SetItem(entries[i].Key, entries[i].Value);
-            else
-                _slots[i].Clear();
-        }
-
+        int unique = _inventory != null ? _inventory.Items.Count : 0;
         if (uniqueCountText != null)
+        {
             uniqueCountText.text = unique == 0
                 ? "0 unique items"
-                : $"{unique} unique item{(unique == 1 ? "" : "s")}";
+                : $"{unique} unique item{(unique == 1 ? "" : "s")}  ·  bag {filledGeneral}/{InventorySystem.GeneralSize}";
+        }
     }
 
     public void ShowTooltip(InventorySlotUI owner, string title, string description)
@@ -230,38 +236,121 @@ public class InventoryOverlayUI : MonoBehaviour
         if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out Vector2 local))
             return;
 
-        // Offset so the box sits beside the cursor instead of under it.
         tooltipRoot.anchoredPosition = local + new Vector2(18f, -18f);
     }
 
     void EnsureSlots()
     {
-        int capacity = Mathf.Max(1, columns) * Mathf.Max(1, rows);
-        while (_slots.Count < capacity)
+        const float slotSize = 72f;
+
+        // Prefer the row under ToolbarSection so layout sizing applies.
+        if (toolbarRoot != null && toolbarRoot.name == "ToolbarSection")
         {
-            InventorySlotUI slot = CreateSlot(_slots.Count);
-            _slots.Add(slot);
+            Transform row = toolbarRoot.Find("ToolbarRow");
+            if (row != null)
+                toolbarRoot = row as RectTransform;
         }
 
-        for (int i = 0; i < _slots.Count; i++)
+        while (_toolbarSlots.Count < InventorySystem.ToolbarSize)
         {
-            bool active = i < capacity;
-            _slots[i].gameObject.SetActive(active);
-            _slots[i].BindOverlay(this);
+            int i = _toolbarSlots.Count;
+            InventorySlotUI slot = CreateSlot($"ToolbarSlot_{i:00}", toolbarRoot);
+            _toolbarSlots.Add(slot);
+        }
+
+        for (int i = 0; i < _toolbarSlots.Count; i++)
+        {
+            InventorySlotUI slot = _toolbarSlots[i];
+            NormalizeToolbarSlot(slot, slotSize);
+            slot.BindOverlay(this);
+        }
+
+        int generalCapacity = Mathf.Max(1, columns) * Mathf.Max(1, rows);
+        generalCapacity = Mathf.Max(generalCapacity, InventorySystem.GeneralSize);
+        while (_generalSlots.Count < generalCapacity)
+        {
+            InventorySlotUI slot = CreateSlot($"BagSlot_{_generalSlots.Count:00}", gridRoot);
+            _generalSlots.Add(slot);
+        }
+
+        for (int i = 0; i < _generalSlots.Count; i++)
+        {
+            bool active = i < InventorySystem.GeneralSize;
+            _generalSlots[i].gameObject.SetActive(active);
+            _generalSlots[i].BindOverlay(this);
         }
     }
 
-    InventorySlotUI CreateSlot(int index)
+    static void NormalizeToolbarSlot(InventorySlotUI slot, float slotSize)
+    {
+        if (slot == null)
+            return;
+
+        // Overlay toolbar must not show equipped/selection rings.
+        for (int c = slot.transform.childCount - 1; c >= 0; c--)
+        {
+            Transform child = slot.transform.GetChild(c);
+            if (child.name == "SelectRing" || child.name == "Highlight")
+                Object.Destroy(child.gameObject);
+        }
+
+        var rt = slot.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = new Vector2(slotSize, slotSize);
+            rt.localScale = Vector3.one;
+        }
+
+        var le = slot.GetComponent<LayoutElement>();
+        if (le == null)
+            le = slot.gameObject.AddComponent<LayoutElement>();
+        le.preferredWidth = slotSize;
+        le.preferredHeight = slotSize;
+        le.minWidth = slotSize;
+        le.minHeight = slotSize;
+        le.flexibleWidth = 0f;
+        le.flexibleHeight = 0f;
+        le.ignoreLayout = false;
+
+        // Keep icon centered and readable at 72px.
+        Transform iconTf = slot.transform.Find("Icon");
+        if (iconTf != null)
+        {
+            var iconRt = iconTf as RectTransform;
+            if (iconRt != null)
+            {
+                iconRt.anchorMin = new Vector2(0.5f, 0.5f);
+                iconRt.anchorMax = new Vector2(0.5f, 0.5f);
+                iconRt.pivot = new Vector2(0.5f, 0.5f);
+                iconRt.anchoredPosition = Vector2.zero;
+                iconRt.sizeDelta = new Vector2(44f, 44f);
+                iconRt.localScale = Vector3.one;
+            }
+
+            var iconImg = iconTf.GetComponent<Image>();
+            if (iconImg != null)
+            {
+                iconImg.preserveAspect = true;
+                iconImg.type = Image.Type.Simple;
+                iconImg.raycastTarget = false;
+            }
+        }
+    }
+
+    InventorySlotUI CreateSlot(string name, Transform parent)
     {
         InventorySlotUI slot;
         if (slotPrefab != null)
         {
-            slot = Instantiate(slotPrefab, gridRoot);
-            slot.name = $"Slot_{index:00}";
+            slot = Instantiate(slotPrefab, parent);
+            slot.name = name;
         }
         else
         {
-            slot = BuildSlotRuntime($"Slot_{index:00}", gridRoot);
+            slot = BuildSlotRuntime(name, parent);
         }
 
         slot.BindOverlay(this);
@@ -271,7 +360,8 @@ public class InventoryOverlayUI : MonoBehaviour
 
     void EnsureUi()
     {
-        if (root != null && gridRoot != null && titleText != null && uniqueCountText != null && tooltipRoot != null)
+        if (root != null && gridRoot != null && toolbarRoot != null &&
+            titleText != null && uniqueCountText != null && tooltipRoot != null)
         {
             _canvas = GetComponentInChildren<Canvas>(true);
             return;
@@ -298,20 +388,11 @@ public class InventoryOverlayUI : MonoBehaviour
             _canvas = canvasGo.GetComponent<Canvas>();
         }
 
-        // Drop the old text-list ScrollView if a previous version left one around.
-        Transform legacyScroll = root != null
-            ? root.transform.Find("ScrollView")
-            : canvasGo.transform.Find("Panel/ScrollView");
-        if (legacyScroll != null)
-            Destroy(legacyScroll.gameObject);
-
         if (root == null)
         {
             Transform existingPanel = canvasGo.transform.Find("Panel");
             if (existingPanel != null)
-            {
                 root = existingPanel.gameObject;
-            }
             else
             {
                 var panel = CreateRect("Panel", canvasGo.transform);
@@ -319,20 +400,23 @@ public class InventoryOverlayUI : MonoBehaviour
                 panelRt.anchorMin = new Vector2(0.5f, 0.5f);
                 panelRt.anchorMax = new Vector2(0.5f, 0.5f);
                 panelRt.pivot = new Vector2(0.5f, 0.5f);
-                panelRt.sizeDelta = new Vector2(620f, 520f);
+                panelRt.sizeDelta = new Vector2(640f, 620f);
                 var bg = panel.AddComponent<Image>();
                 bg.color = new Color(0.07f, 0.08f, 0.11f, 0.94f);
                 root = panel;
             }
         }
 
+        // Enlarge existing panel a bit for toolbar + bag.
+        var rootRt = root.GetComponent<RectTransform>();
+        if (rootRt != null && rootRt.sizeDelta.y < 600f)
+            rootRt.sizeDelta = new Vector2(Mathf.Max(rootRt.sizeDelta.x, 640f), 620f);
+
         if (titleText == null)
         {
             Transform titleTf = root.transform.Find("Title");
             if (titleTf != null)
-            {
                 titleText = titleTf.GetComponent<TMP_Text>();
-            }
             else
             {
                 var titleGo = CreateRect("Title", root.transform);
@@ -340,10 +424,10 @@ public class InventoryOverlayUI : MonoBehaviour
                 titleRt.anchorMin = new Vector2(0f, 1f);
                 titleRt.anchorMax = new Vector2(1f, 1f);
                 titleRt.pivot = new Vector2(0.5f, 1f);
-                titleRt.anchoredPosition = new Vector2(0f, -16f);
-                titleRt.sizeDelta = new Vector2(-40f, 40f);
+                titleRt.anchoredPosition = new Vector2(0f, -14f);
+                titleRt.sizeDelta = new Vector2(-40f, 36f);
                 titleText = titleGo.AddComponent<TextMeshProUGUI>();
-                titleText.fontSize = 34f;
+                titleText.fontSize = 32f;
                 titleText.fontStyle = FontStyles.Bold;
                 titleText.alignment = TextAlignmentOptions.Center;
                 titleText.color = new Color(1f, 0.88f, 0.55f, 1f);
@@ -356,9 +440,7 @@ public class InventoryOverlayUI : MonoBehaviour
         {
             Transform countTf = root.transform.Find("UniqueCount");
             if (countTf != null)
-            {
                 uniqueCountText = countTf.GetComponent<TMP_Text>();
-            }
             else
             {
                 var countGo = CreateRect("UniqueCount", root.transform);
@@ -366,10 +448,10 @@ public class InventoryOverlayUI : MonoBehaviour
                 countRt.anchorMin = new Vector2(0f, 1f);
                 countRt.anchorMax = new Vector2(1f, 1f);
                 countRt.pivot = new Vector2(0.5f, 1f);
-                countRt.anchoredPosition = new Vector2(0f, -56f);
-                countRt.sizeDelta = new Vector2(-40f, 28f);
+                countRt.anchoredPosition = new Vector2(0f, -48f);
+                countRt.sizeDelta = new Vector2(-40f, 24f);
                 uniqueCountText = countGo.AddComponent<TextMeshProUGUI>();
-                uniqueCountText.fontSize = 20f;
+                uniqueCountText.fontSize = 18f;
                 uniqueCountText.alignment = TextAlignmentOptions.Center;
                 uniqueCountText.color = new Color(0.75f, 0.78f, 0.85f, 1f);
                 uniqueCountText.text = "0 unique items";
@@ -394,12 +476,69 @@ public class InventoryOverlayUI : MonoBehaviour
             hint.raycastTarget = false;
         }
 
+        if (toolbarRoot == null)
+        {
+            Transform existing = root.transform.Find("ToolbarSection");
+            if (existing != null)
+            {
+                Transform row = existing.Find("ToolbarRow");
+                toolbarRoot = row != null
+                    ? row.GetComponent<RectTransform>()
+                    : existing.GetComponent<RectTransform>();
+            }
+            else
+            {
+                var section = CreateRect("ToolbarSection", root.transform);
+                toolbarRoot = section.GetComponent<RectTransform>();
+                toolbarRoot.anchorMin = new Vector2(0f, 1f);
+                toolbarRoot.anchorMax = new Vector2(1f, 1f);
+                toolbarRoot.pivot = new Vector2(0.5f, 1f);
+                toolbarRoot.anchoredPosition = new Vector2(0f, -72f);
+                toolbarRoot.sizeDelta = new Vector2(-40f, 78f);
+
+                var labelGo = CreateRect("ToolbarLabel", section.transform);
+                var labelRt = labelGo.GetComponent<RectTransform>();
+                labelRt.anchorMin = new Vector2(0f, 1f);
+                labelRt.anchorMax = new Vector2(1f, 1f);
+                labelRt.pivot = new Vector2(0.5f, 1f);
+                labelRt.anchoredPosition = Vector2.zero;
+                labelRt.sizeDelta = new Vector2(0f, 18f);
+                var label = labelGo.AddComponent<TextMeshProUGUI>();
+                label.fontSize = 15f;
+                label.alignment = TextAlignmentOptions.Center;
+                label.color = new Color(0.7f, 0.74f, 0.82f, 1f);
+                label.text = "Toolbar";
+                label.raycastTarget = false;
+
+                var rowGo = CreateRect("ToolbarRow", section.transform);
+                var rowRt = rowGo.GetComponent<RectTransform>();
+                rowRt.anchorMin = new Vector2(0.5f, 0f);
+                rowRt.anchorMax = new Vector2(0.5f, 0f);
+                rowRt.pivot = new Vector2(0.5f, 0f);
+                rowRt.anchoredPosition = new Vector2(0f, 2f);
+                rowRt.sizeDelta = new Vector2(7 * 72f + 6 * 8f, 72f);
+                var hlg = rowGo.AddComponent<HorizontalLayoutGroup>();
+                hlg.spacing = 8f;
+                hlg.childAlignment = TextAnchor.MiddleCenter;
+                hlg.childControlWidth = true;
+                hlg.childControlHeight = true;
+                hlg.childForceExpandWidth = false;
+                hlg.childForceExpandHeight = false;
+
+                // Parent slots under the row, not the section.
+                toolbarRoot = rowRt;
+            }
+        }
+
         if (gridRoot == null)
         {
             Transform existingGrid = root.transform.Find("SlotGrid");
             if (existingGrid != null)
             {
                 gridRoot = existingGrid.GetComponent<RectTransform>();
+                // Modest gap under the toolbar strip.
+                gridRoot.offsetMax = new Vector2(-28f, -160f);
+                gridRoot.offsetMin = new Vector2(28f, 48f);
             }
             else
             {
@@ -408,7 +547,7 @@ public class InventoryOverlayUI : MonoBehaviour
                 gridRoot.anchorMin = new Vector2(0f, 0f);
                 gridRoot.anchorMax = new Vector2(1f, 1f);
                 gridRoot.offsetMin = new Vector2(28f, 48f);
-                gridRoot.offsetMax = new Vector2(-28f, -96f);
+                gridRoot.offsetMax = new Vector2(-28f, -160f);
 
                 var grid = gridGo.AddComponent<GridLayoutGroup>();
                 grid.cellSize = new Vector2(72f, 72f);
@@ -420,10 +559,31 @@ public class InventoryOverlayUI : MonoBehaviour
                 grid.constraintCount = Mathf.Max(1, columns);
             }
         }
+        else
+        {
+            // Existing grid: leave a small gap under the toolbar.
+            gridRoot.offsetMax = new Vector2(gridRoot.offsetMax.x, Mathf.Min(gridRoot.offsetMax.y, -160f));
+        }
+
+        if (root.transform.Find("BagLabel") == null)
+        {
+            var bagLabelGo = CreateRect("BagLabel", root.transform);
+            var bagRt = bagLabelGo.GetComponent<RectTransform>();
+            bagRt.anchorMin = new Vector2(0f, 1f);
+            bagRt.anchorMax = new Vector2(1f, 1f);
+            bagRt.pivot = new Vector2(0.5f, 1f);
+            bagRt.anchoredPosition = new Vector2(0f, -152f);
+            bagRt.sizeDelta = new Vector2(-40f, 18f);
+            var bagLabel = bagLabelGo.AddComponent<TextMeshProUGUI>();
+            bagLabel.fontSize = 15f;
+            bagLabel.alignment = TextAlignmentOptions.Center;
+            bagLabel.color = new Color(0.7f, 0.74f, 0.82f, 1f);
+            bagLabel.text = "Bag";
+            bagLabel.raycastTarget = false;
+        }
 
         if (tooltipRoot == null)
         {
-            // Parent to canvas so tooltip can follow the cursor outside the panel.
             var tipGo = CreateRect("Tooltip", canvasGo.transform);
             tooltipRoot = tipGo.GetComponent<RectTransform>();
             tooltipRoot.anchorMin = new Vector2(0.5f, 0.5f);
@@ -448,26 +608,22 @@ public class InventoryOverlayUI : MonoBehaviour
             fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            var titleGo = CreateRect("TooltipTitle", tipGo.transform);
-            tooltipTitleText = titleGo.AddComponent<TextMeshProUGUI>();
+            var tipTitleGo = CreateRect("TooltipTitle", tipGo.transform);
+            tooltipTitleText = tipTitleGo.AddComponent<TextMeshProUGUI>();
             tooltipTitleText.fontSize = 20f;
             tooltipTitleText.fontStyle = FontStyles.Bold;
             tooltipTitleText.color = new Color(1f, 0.88f, 0.55f, 1f);
             tooltipTitleText.alignment = TextAlignmentOptions.Left;
             tooltipTitleText.raycastTarget = false;
             tooltipTitleText.textWrappingMode = TextWrappingModes.NoWrap;
-            var titleLe = titleGo.AddComponent<LayoutElement>();
-            titleLe.minWidth = 160f;
 
-            var bodyGo = CreateRect("TooltipBody", tipGo.transform);
-            tooltipBodyText = bodyGo.AddComponent<TextMeshProUGUI>();
+            var tipBodyGo = CreateRect("TooltipBody", tipGo.transform);
+            tooltipBodyText = tipBodyGo.AddComponent<TextMeshProUGUI>();
             tooltipBodyText.fontSize = 16f;
             tooltipBodyText.color = new Color(0.85f, 0.87f, 0.92f, 1f);
             tooltipBodyText.alignment = TextAlignmentOptions.Left;
             tooltipBodyText.raycastTarget = false;
             tooltipBodyText.textWrappingMode = TextWrappingModes.Normal;
-            var bodyLe = bodyGo.AddComponent<LayoutElement>();
-            bodyLe.preferredWidth = 220f;
 
             tipGo.SetActive(false);
         }
@@ -477,6 +633,12 @@ public class InventoryOverlayUI : MonoBehaviour
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
+
+        var le = go.AddComponent<LayoutElement>();
+        le.preferredWidth = 72f;
+        le.preferredHeight = 72f;
+        le.minWidth = 72f;
+        le.minHeight = 72f;
 
         var bg = go.AddComponent<Image>();
         bg.color = new Color(0.18f, 0.19f, 0.23f, 1f);
@@ -490,7 +652,7 @@ public class InventoryOverlayUI : MonoBehaviour
         iconRt.anchorMin = new Vector2(0.5f, 0.5f);
         iconRt.anchorMax = new Vector2(0.5f, 0.5f);
         iconRt.pivot = new Vector2(0.5f, 0.5f);
-        iconRt.sizeDelta = new Vector2(48f, 48f);
+        iconRt.sizeDelta = new Vector2(44f, 44f);
         var icon = iconGo.AddComponent<Image>();
         icon.raycastTarget = false;
         icon.preserveAspect = true;

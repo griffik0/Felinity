@@ -84,6 +84,9 @@ public class ItemPickup : MonoBehaviour
 
         _collecting = true;
 
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayItemPickupChime();
+
         if (InventorySystem.Instance != null && item != null)
             InventorySystem.Instance.AddItem(item, amount);
 

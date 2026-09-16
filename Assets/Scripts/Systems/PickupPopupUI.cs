@@ -157,7 +157,9 @@ public class PickupPopupUI : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / duration));
-            for (int i = 0; i < _entries.Count; i++)
+            // Clamp to starts.Length — new pickups can grow _entries mid-animation.
+            int count = Mathf.Min(_entries.Count, starts.Length);
+            for (int i = 0; i < count; i++)
             {
                 if (_entries[i].rect == null)
                     continue;

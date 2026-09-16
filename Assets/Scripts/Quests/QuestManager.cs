@@ -144,7 +144,7 @@ public class QuestManager : MonoBehaviour
             if (quest.requiredItem == null || _completed.Contains(quest))
                 continue;
 
-            SetProgress(quest, InventorySystem.Instance.GetCount(quest.requiredItem));
+            SetProgress(quest, InventorySystem.Instance.GetTotalCount(quest.requiredItem));
         }
     }
 
@@ -196,7 +196,7 @@ public class QuestManager : MonoBehaviour
             InventorySystem.Instance != null &&
             !_completed.Contains(quest))
         {
-            _progress[quest] = InventorySystem.Instance.GetCount(quest.requiredItem);
+            _progress[quest] = InventorySystem.Instance.GetTotalCount(quest.requiredItem);
         }
 
         int current = GetProgress(quest);
@@ -233,5 +233,8 @@ public class QuestManager : MonoBehaviour
 
         Debug.Log($"Quest complete: {quest.questName}! +{quest.catCoinReward} CatCoins");
         OnQuestCompleted?.Invoke(quest);
+
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayQuestComplete();
     }
 }

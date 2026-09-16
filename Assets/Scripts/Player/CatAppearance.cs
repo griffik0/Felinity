@@ -78,7 +78,7 @@ public class CatAppearance : MonoBehaviour
     public int defaultPresetIndex;
 
     [Header("Debug")]
-    public bool enableDebugHotkeys = true;
+    public bool enableDebugHotkeys = false;
 
     [Tooltip("When false (character-creation preview), Start won't apply PlayerProfile.")]
     public bool applyPlayerProfileOnStart = true;

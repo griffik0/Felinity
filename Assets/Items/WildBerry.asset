@@ -15,4 +15,4 @@ MonoBehaviour:
   itemName: Wild Berry
   description: A sweet berry found in sunny patches.
   category: 0
-  icon: {fileID: 21300000, guid: 160e3078205060c4c8a71bd00a53395c, type: 3}
+  icon: {fileID: 21300000, guid: 817b4ca2a9d07324d9f7766336678ae7, type: 3}

@@ -22,6 +22,9 @@ public class ForagePatch : MonoBehaviour, IInteractable
         if (!_available)
             return;
 
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayForage();
+
         ItemData found = PickDrop();
         if (found != null)
             SpawnPickup(found, 1);

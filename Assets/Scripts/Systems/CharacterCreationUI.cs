@@ -85,6 +85,8 @@ public class CharacterCreationUI : MonoBehaviour
         int count = CoatCount;
         if (count <= 0)
             return;
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
         SelectCoat((_selectedCoatIndex - 1 + count) % count);
     }
 
@@ -93,6 +95,8 @@ public class CharacterCreationUI : MonoBehaviour
         int count = CoatCount;
         if (count <= 0)
             return;
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
         SelectCoat((_selectedCoatIndex + 1) % count);
     }
 
@@ -147,6 +151,9 @@ public class CharacterCreationUI : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(_profile.catName))
             return;
+
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
 
         if (previewAppearance != null && previewAppearance.coatPresets != null &&
             _selectedCoatIndex >= 0 && _selectedCoatIndex < previewAppearance.coatPresets.Length)

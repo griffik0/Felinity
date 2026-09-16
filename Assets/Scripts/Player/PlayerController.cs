@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 3f;
 
+    [Header("Footsteps")]
+    public float footstepInterval = 0.35f;
+
     [Header("Interaction")]
     public float interactionRadius = 1.25f;
 
@@ -34,6 +37,8 @@ public class PlayerController : MonoBehaviour
     Vector2 _moveInput;
     readonly List<IInteractable> _inRange = new List<IInteractable>();
     CircleCollider2D _interactionTrigger;
+    float _footstepTimer;
+    bool _nextFootstepIsB;
 
     void Awake()
     {
@@ -54,6 +59,7 @@ public class PlayerController : MonoBehaviour
         {
             _moveInput = Vector2.zero;
             IsMoving = false;
+            _footstepTimer = 0f;
             CurrentInteractable = null;
             return;
         }
@@ -63,12 +69,31 @@ public class PlayerController : MonoBehaviour
             _moveInput.Normalize();
 
         IsMoving = _moveInput.sqrMagnitude > 0.0001f;
+        UpdateFootsteps();
         RefreshClosestInteractable();
 
         // Ignore the same E/click that just dismissed dialogue (prevents soft-lock re-Talk).
         if (WasInteractPressed() &&
             (dialogue == null || !dialogue.BlocksWorldInput))
             OnInteract();
+    }
+
+    void UpdateFootsteps()
+    {
+        if (!IsMoving)
+        {
+            _footstepTimer = 0f;
+            return;
+        }
+
+        _footstepTimer += Time.deltaTime;
+        if (_footstepTimer < footstepInterval)
+            return;
+
+        _footstepTimer = 0f;
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayFootstep(_nextFootstepIsB);
+        _nextFootstepIsB = !_nextFootstepIsB;
     }
 
     void FixedUpdate()

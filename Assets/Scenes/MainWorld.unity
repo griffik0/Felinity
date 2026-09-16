@@ -1408,6 +1408,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &487449885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 487449887}
+  - component: {fileID: 487449886}
+  m_Layer: 0
+  m_Name: ToolbarUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &487449886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487449885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d33c03625474d94e9d33730b073e852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbarUI
+  slotSize: 64
+  slotSpacing: 8
+--- !u!4 &487449887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487449885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &495233492
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,6 +2692,7 @@ MonoBehaviour:
   root: {fileID: 0}
   titleText: {fileID: 0}
   uniqueCountText: {fileID: 0}
+  toolbarRoot: {fileID: 0}
   gridRoot: {fileID: 0}
   tooltipRoot: {fileID: 0}
   tooltipTitleText: {fileID: 0}
@@ -5839,6 +5886,7 @@ GameObject:
   - component: {fileID: 2008471611}
   - component: {fileID: 2008471612}
   - component: {fileID: 2008471613}
+  - component: {fileID: 2008471614}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -6150,8 +6198,21 @@ MonoBehaviour:
     replace2: {r: 0.82, g: 0.7, b: 0.52, a: 1}
     replace3: {r: 0, g: 0, b: 0, a: 0}
   defaultPresetIndex: 0
-  enableDebugHotkeys: 1
+  enableDebugHotkeys: 0
   applyPlayerProfileOnStart: 1
+--- !u!114 &2008471614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008471605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0140b1505f9be8469b84935055b5ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbarSelection
+  currentSlotIndex: 0
 --- !u!1 &2023189447
 GameObject:
   m_ObjectHideFlags: 0
@@ -6181,11 +6242,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b18b34d67d31ea147870a9d00a0594b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickupPopupUI
-  popupText: {fileID: 0}
-  canvasGroup: {fileID: 0}
   fadeInSeconds: 0.15
   holdSeconds: 1.5
   fadeOutSeconds: 0.5
+  lineHeight: 36
+  lineSpacing: 4
+  maxVisible: 8
 --- !u!4 &2023189449
 Transform:
   m_ObjectHideFlags: 0
@@ -6535,3 +6597,4 @@ SceneRoots:
   - {fileID: 114857866}
   - {fileID: 778911074}
   - {fileID: 2023189449}
+  - {fileID: 487449887}

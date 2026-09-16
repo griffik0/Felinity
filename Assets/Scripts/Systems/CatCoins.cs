@@ -27,6 +27,9 @@ public static class CatCoins
 
     public static void Add(int amount)
     {
+        if (amount > 0 && SFXManager.Instance != null)
+            SFXManager.Instance.PlayCatCoinGain();
+
         CatCoinBalance += amount;
     }
 }

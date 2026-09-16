@@ -86,7 +86,17 @@ public class PauseManager : MonoBehaviour
             pauseCanvas.SetActive(paused);
 
         if (notify)
+        {
             OnPauseStateChanged?.Invoke(IsPaused);
+
+            if (SFXManager.Instance != null)
+            {
+                if (paused)
+                    SFXManager.Instance.PlayPauseOpen();
+                else
+                    SFXManager.Instance.PlayPauseClose();
+            }
+        }
     }
 
     public void QuitToTitle()
@@ -105,20 +115,44 @@ public class PauseManager : MonoBehaviour
     {
         if (resumeButton != null)
         {
-            resumeButton.onClick.RemoveListener(Resume);
-            resumeButton.onClick.AddListener(Resume);
+            resumeButton.onClick.RemoveListener(OnResumeClicked);
+            resumeButton.onClick.AddListener(OnResumeClicked);
         }
 
         if (quitToTitleButton != null)
         {
-            quitToTitleButton.onClick.RemoveListener(QuitToTitle);
-            quitToTitleButton.onClick.AddListener(QuitToTitle);
+            quitToTitleButton.onClick.RemoveListener(OnQuitToTitleClicked);
+            quitToTitleButton.onClick.AddListener(OnQuitToTitleClicked);
         }
 
         if (quitGameButton != null)
         {
-            quitGameButton.onClick.RemoveListener(QuitGame);
-            quitGameButton.onClick.AddListener(QuitGame);
+            quitGameButton.onClick.RemoveListener(OnQuitGameClicked);
+            quitGameButton.onClick.AddListener(OnQuitGameClicked);
         }
+    }
+
+    void OnResumeClicked()
+    {
+        PlayUiClick();
+        Resume();
+    }
+
+    void OnQuitToTitleClicked()
+    {
+        PlayUiClick();
+        QuitToTitle();
+    }
+
+    void OnQuitGameClicked()
+    {
+        PlayUiClick();
+        QuitGame();
+    }
+
+    static void PlayUiClick()
+    {
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
     }
 }

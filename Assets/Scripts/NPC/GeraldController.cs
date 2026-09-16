@@ -167,7 +167,7 @@ public class GeraldController : MonoBehaviour, IInteractable
     void BeginQuestActiveTalk()
     {
         int have = InventorySystem.Instance != null && wildBerry != null
-            ? InventorySystem.Instance.GetCount(wildBerry)
+            ? InventorySystem.Instance.GetTotalCount(wildBerry)
             : 0;
 
         _busy = true;

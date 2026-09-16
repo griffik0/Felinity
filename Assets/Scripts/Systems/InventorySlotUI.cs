@@ -59,10 +59,21 @@ public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         if (iconImage != null)
         {
-            iconImage.enabled = true;
-            iconImage.sprite = item.icon != null ? item.icon : GetFallbackIcon();
-            iconImage.color = item.icon != null ? filledIconColor : emptyIconColor;
+            iconImage.type = Image.Type.Simple;
             iconImage.preserveAspect = true;
+            iconImage.raycastTarget = false;
+            iconImage.enabled = true;
+
+            if (item.icon != null)
+            {
+                iconImage.sprite = item.icon;
+                iconImage.color = filledIconColor;
+            }
+            else
+            {
+                iconImage.sprite = GetFallbackIcon();
+                iconImage.color = emptyIconColor;
+            }
         }
 
         if (countText != null)
@@ -87,10 +98,8 @@ public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         if (iconImage != null)
         {
-            iconImage.enabled = true;
-            iconImage.sprite = GetFallbackIcon();
-            iconImage.color = emptyIconColor;
-            iconImage.preserveAspect = true;
+            iconImage.sprite = null;
+            iconImage.enabled = false;
         }
 
         if (countText != null)

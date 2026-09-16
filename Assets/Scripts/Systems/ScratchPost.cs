@@ -13,6 +13,9 @@ public class ScratchPost : MonoBehaviour, IInteractable
 
     public void Interact(GameObject interactor)
     {
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayScratch();
+
         CatCoins.Add(coinsPerScratch);
         Debug.Log($"Scratched the post! +{coinsPerScratch} CatCoins");
 

@@ -33,11 +33,15 @@ public class TitleScreenUI : MonoBehaviour
 
     public void OnStartGame()
     {
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
         GameFlow.LoadCharacterCreation();
     }
 
     public void OnQuit()
     {
+        if (SFXManager.Instance != null)
+            SFXManager.Instance.PlayButtonClick();
         GameFlow.QuitGame();
     }
 }
