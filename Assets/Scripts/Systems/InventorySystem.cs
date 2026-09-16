@@ -110,6 +110,20 @@ public class InventorySystem : MonoBehaviour
         return _general[index];
     }
 
+    /// <summary>Clears toolbar + general without granting/removing items (save/load).</summary>
+    public void ClearAll()
+    {
+        EnsureSlotsInitialized(_toolbar);
+        EnsureSlotsInitialized(_general);
+        for (int i = 0; i < _toolbar.Length; i++)
+            _toolbar[i].Clear();
+        for (int i = 0; i < _general.Length; i++)
+            _general[i].Clear();
+        OnInventoryChanged?.Invoke();
+    }
+
+    public void NotifyChanged() => OnInventoryChanged?.Invoke();
+
     public void AddItem(ItemData item, int amount = 1)
     {
         if (item == null || amount <= 0)

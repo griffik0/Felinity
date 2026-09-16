@@ -830,6 +830,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1201270732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1201270734}
+  - component: {fileID: 1201270733}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1201270733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201270732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f94946be82aee24496205e044f2fdee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  itemCatalog:
+  - {fileID: 11400000, guid: b158145d6f18aa644b285c260f000a23, type: 2}
+  - {fileID: 11400000, guid: 0de685eb8fadc3a4bbec93fc76d33b34, type: 2}
+  - {fileID: 11400000, guid: a94b44ba66d335d40962db8cdd280ad2, type: 2}
+  enableDebugSaveKey: 1
+--- !u!4 &1201270734
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201270732}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1286924513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,6 +1268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TitleScreenUI
   titleText: {fileID: 265830674}
   startButton: {fileID: 466426768}
+  continueButton: {fileID: 0}
   quitButton: {fileID: 1940724561}
 --- !u!114 &1740446077
 MonoBehaviour:
@@ -1437,3 +1487,4 @@ SceneRoots:
   - {fileID: 1740446080}
   - {fileID: 1127801471}
   - {fileID: 1332868805}
+  - {fileID: 1201270734}

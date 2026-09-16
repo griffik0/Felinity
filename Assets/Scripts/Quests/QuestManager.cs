@@ -87,6 +87,63 @@ public class QuestManager : MonoBehaviour
         return quest != null && _completed.Contains(quest);
     }
 
+    public QuestData FindQuestByName(string questName)
+    {
+        if (string.IsNullOrEmpty(questName))
+            return null;
+
+        foreach (QuestData quest in activeQuests)
+        {
+            if (quest != null && string.Equals(quest.questName, questName, StringComparison.OrdinalIgnoreCase))
+                return quest;
+        }
+
+        return null;
+    }
+
+    public List<string> GetCompletedQuestNames()
+    {
+        var names = new List<string>();
+        foreach (QuestData quest in _completed)
+        {
+            if (quest != null && !string.IsNullOrEmpty(quest.questName))
+                names.Add(quest.questName);
+        }
+
+        return names;
+    }
+
+    /// <summary>Sets progress without auto-completing or playing SFX (save/load).</summary>
+    public void SetProgressSilent(QuestData quest, int current)
+    {
+        if (quest == null)
+            return;
+
+        current = Mathf.Max(0, current);
+        _progress[quest] = current;
+        OnQuestProgress?.Invoke(quest, current, quest.targetAmount);
+    }
+
+    /// <summary>Marks complete without granting CatCoins or playing SFX (save/load).</summary>
+    public void MarkCompleteSilent(QuestData quest)
+    {
+        if (quest == null)
+            return;
+
+        if (!_progress.ContainsKey(quest))
+            _progress[quest] = quest.targetAmount;
+        else
+            _progress[quest] = Mathf.Max(_progress[quest], quest.targetAmount);
+
+        if (!_completed.Add(quest))
+        {
+            OnQuestProgress?.Invoke(quest, GetProgress(quest), quest.targetAmount);
+            return;
+        }
+
+        OnQuestProgress?.Invoke(quest, GetProgress(quest), quest.targetAmount);
+    }
+
     public void ReportScratch(int amount = 1)
     {
         ReportObjective(ObjectiveType.ScratchCount, amount);

@@ -101,12 +101,16 @@ public class PauseManager : MonoBehaviour
 
     public void QuitToTitle()
     {
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.Save();
         SetPaused(false, notify: false);
         GameFlow.LoadTitle();
     }
 
     public void QuitGame()
     {
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.Save();
         SetPaused(false, notify: false);
         GameFlow.QuitGame();
     }

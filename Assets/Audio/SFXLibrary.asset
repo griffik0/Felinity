@@ -13,22 +13,36 @@ MonoBehaviour:
   m_Name: SFXLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SFXLibrary
   scratch: {fileID: 0}
+  scratchVolume: 1
   forage:
   - {fileID: 8300000, guid: fba047c2d4a594e4dac576920fe6ed78, type: 3}
   - {fileID: 8300000, guid: b9b2cf9d58ae4bb40a36cb4eb411df8a, type: 3}
   - {fileID: 8300000, guid: 4f059279ed1fa9143a80d2eb5b075ed3, type: 3}
   - {fileID: 8300000, guid: 8e7f183d90222924593e87774242e65a, type: 3}
+  forageVolume: 1
   itemPickupChime: {fileID: 8300000, guid: c44998acec9c7b849b69f70f4254d0d9, type: 3}
-  itemPickupChimeVolume: 0.35
+  itemPickupChimeVolume: 0.2
   footstepA: {fileID: 0}
+  footstepAVolume: 1
   footstepB: {fileID: 0}
+  footstepBVolume: 1
   treeUpgrade: {fileID: 8300000, guid: 452b599acbf2a7a4cabf5940ce5224b0, type: 3}
+  treeUpgradeVolume: 0.5
   catCoinGain: {fileID: 8300000, guid: 9164776b0b232e8478bcc909a3fe8e98, type: 3}
+  catCoinGainVolume: 0.4
   questComplete: {fileID: 8300000, guid: 772d0c155bfdc214e9037469801977aa, type: 3}
+  questCompleteVolume: 0.25
   dialogueAdvance: {fileID: 0}
+  dialogueAdvanceVolume: 1
   buttonClick: {fileID: 0}
+  buttonClickVolume: 1
   toolbarSwitch: {fileID: 0}
+  toolbarSwitchVolume: 1
   inventoryOpen: {fileID: 0}
+  inventoryOpenVolume: 1
   inventoryClose: {fileID: 0}
+  inventoryCloseVolume: 1
   pauseOpen: {fileID: 0}
+  pauseOpenVolume: 1
   pauseClose: {fileID: 0}
+  pauseCloseVolume: 1
