@@ -1,0 +1,131 @@
+{
+  "version": "1.0.0",
+  "name": "Felinity 1.0.0",
+  "exportDate": "2026-09-30T07:10:38.186446Z",
+  "engine": "pixellab-map-editor",
+  "mapConfig": {
+    "tileSize": 32,
+    "dimensions": {
+      "width": 101,
+      "height": 101,
+      "pixelWidth": 3232,
+      "pixelHeight": 3232
+    },
+    "boundingBox": {
+      "maxX": 71,
+      "maxY": 62,
+      "minX": -29,
+      "minY": -38
+    }
+  },
+  "terrains": [
+    {
+      "id": 3,
+      "name": "highly textured worn dirt path with dense packed earth, tiny embedded pebbles, and rich tonal variations showing deep earthen hollows and sun-baked highlights",
+      "color": "#92400e",
+      "baseTileId": "d587c071-38cf-46e4-996a-3c4b6699a1f0",
+      "walkable": null
+    },
+    {
+      "id": 2,
+      "name": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "color": "#9ca3af",
+      "baseTileId": "97d18996-1d65-4ed1-892b-5efb50246c68",
+      "walkable": null
+    },
+    {
+      "id": 4,
+      "name": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small pebble clusters in layered earthy browns featuring deep crevices and bright dry spots",
+      "color": "#f59e0b",
+      "baseTileId": "6df0013a-099e-4ca1-82e7-444107a9d847",
+      "walkable": null
+    },
+    {
+      "id": 1,
+      "name": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shimmering subsurface currents beneath deep cast shadows and bright sunlit crests",
+      "color": "#2563eb",
+      "baseTileId": "5e218277-5716-4bf0-863c-108e5d03cdae",
+      "walkable": null
+    }
+  ],
+  "tilesets": [
+    {
+      "id": "f573c9ad-465a-4a51-a9fe-e8953d28838d",
+      "filename": "highly textured worn dirt path with dense packed earth, tiny embedded pebbles, and rich ton-88e29669.png",
+      "lowerTerrain": "highly textured worn dirt path with dense packed earth, tiny embedded pebbles, and rich tonal variations showing deep earthen hollows and sun-baked highlights",
+      "upperTerrain": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "lowerTerrainId": 3,
+      "upperTerrainId": 2,
+      "transitionSize": 0.25,
+      "transitionDescription": "thin low edge blending lush green turf into packed dirt with scattered blades and loose soil grains, casting soft layered shadows across the boundary",
+      "tileSize": 32,
+      "gridLayout": "4x4",
+      "wangIndexMapping": "standard",
+      "view": "high top-down",
+      "metadataFilename": "f573c9ad-465a-4a51-a9fe-e8953d28838d.json"
+    },
+    {
+      "id": "6c15ec54-64ee-46d6-9fbc-d8897490c7de",
+      "filename": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shim-a62a810c.png",
+      "lowerTerrain": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shimmering subsurface currents beneath deep cast shadows and bright sunlit crests",
+      "upperTerrain": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "lowerTerrainId": 1,
+      "upperTerrainId": 2,
+      "transitionSize": 0.25,
+      "transitionDescription": "narrow damp sandy shoreline meeting the water with scattered smooth pebbles, intricate wet grains, soft edge weathering, subtle shadowed hollows, and bright highlights",
+      "tileSize": 32,
+      "gridLayout": "4x4",
+      "wangIndexMapping": "standard",
+      "view": "high top-down",
+      "metadataFilename": "6c15ec54-64ee-46d6-9fbc-d8897490c7de.json"
+    },
+    {
+      "id": "158735e8-d485-40ba-b250-8497f4cd1ad7",
+      "filename": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small-867e534b.png",
+      "lowerTerrain": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small pebble clusters in layered earthy browns featuring deep crevices and bright dry spots",
+      "upperTerrain": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "lowerTerrainId": 4,
+      "upperTerrainId": 2,
+      "transitionSize": 0.25,
+      "transitionDescription": "thin low margin where emerald green turf breaks apart into loose brown soil and sparse individual grass blades featuring shadowy root pockets and bright sunlit tips",
+      "tileSize": 32,
+      "gridLayout": "4x4",
+      "wangIndexMapping": "standard",
+      "view": "high top-down",
+      "metadataFilename": "158735e8-d485-40ba-b250-8497f4cd1ad7.json"
+    },
+    {
+      "id": "93327815-5451-44b5-8530-269f933c94ec",
+      "filename": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shim-7ed41296.png",
+      "lowerTerrain": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shimmering subsurface currents beneath deep cast shadows and bright sunlit crests",
+      "upperTerrain": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small pebble clusters in layered earthy browns featuring deep crevices and bright dry spots",
+      "lowerTerrainId": 1,
+      "upperTerrainId": 4,
+      "transitionSize": 0.25,
+      "transitionDescription": "damp shoreline mud meeting the water's edge with dense packed earth texture, scattered fine grit, and embedded small pebble clusters featuring layered earthy browns under deep moisture crevices and bright wet specular highlights",
+      "tileSize": 32,
+      "gridLayout": "4x4",
+      "wangIndexMapping": "standard",
+      "view": "high top-down",
+      "metadataFilename": "93327815-5451-44b5-8530-269f933c94ec.json"
+    }
+  ],
+  "overlays": [
+    {
+      "id": 0,
+      "filename": "overlay-0.png",
+      "type": "inpainting",
+      "dimensions": {
+        "width": 192,
+        "height": 160
+      },
+      "worldCoordinates": {
+        "x": 768,
+        "y": 768
+      },
+      "layer": "custom"
+    }
+  ],
+  "background": null,
+  "mapId": "b1e7cc2d-162c-4505-b9a3-2d9a905e45fb"
+}

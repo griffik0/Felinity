@@ -1,0 +1,133 @@
+{
+  "version": "1.0.0",
+  "totalObjects": 5,
+  "objects": [
+    {
+      "id": "7609f2f2-3412-42cf-9439-29cef2fe5358",
+      "name": "bridge1",
+      "filename": "7609f2f2-3412-42cf-9439-29cef2fe5358.png",
+      "boundingBox": {
+        "x": -117.5,
+        "y": 59.5,
+        "width": 40,
+        "height": 118
+      },
+      "groundBounds": {
+        "x": -117.5,
+        "y": 147.5,
+        "width": 40.0,
+        "height": 30.0
+      },
+      "layer": 1,
+      "visible": true,
+      "locked": false,
+      "description": "A simple wooden plank bridge crossing water, straight horizontal planks with rope\nrailings on both sides, sturdy wooden support posts, pixel art, Stardew Valley\nstyle, cozy cottagecore color palette, low detail, clean simple outlines, flat\nlighting, no drop shadow, no embossing, top-down 3/4 perspective, plain transparent\nbackground",
+      "metadata": {
+        "generatedAt": "2026-09-30T06:54:48.896Z"
+      },
+      "isProgress": false
+    },
+    {
+      "id": "9802331a-ce18-43d8-b9f8-dff1b4cdc391",
+      "name": "Object 0",
+      "filename": "9802331a-ce18-43d8-b9f8-dff1b4cdc391.png",
+      "boundingBox": {
+        "x": 1682,
+        "y": 364,
+        "width": 92,
+        "height": 45
+      },
+      "groundBounds": {
+        "x": 1682.0,
+        "y": 398.0,
+        "width": 92.0,
+        "height": 11.0
+      },
+      "layer": 2,
+      "visible": true,
+      "locked": false,
+      "description": "A simple wooden plank bridge crossing water, straight horizontal planks with rope\nrailings on both sides, sturdy wooden support posts, pixel art, Stardew Valley\nstyle, cozy cottagecore color palette, low detail, clean simple outlines, flat\nlighting, no drop shadow, no embossing, top-down 3/4 perspective, plain transparent\nbackground. stardew valley theme. 32x32 pixel size",
+      "metadata": {
+        "generatedAt": "2026-09-30T06:59:27.744Z"
+      },
+      "isProgress": false
+    },
+    {
+      "id": "83200cd4-c917-4946-ba17-5b7f92ce3711",
+      "name": "bridge2",
+      "filename": "83200cd4-c917-4946-ba17-5b7f92ce3711.png",
+      "boundingBox": {
+        "x": -257,
+        "y": 539,
+        "width": 76,
+        "height": 95
+      },
+      "groundBounds": {
+        "x": -235.0,
+        "y": 610.0,
+        "width": 32.0,
+        "height": 24.0
+      },
+      "layer": 3,
+      "visible": true,
+      "locked": false,
+      "description": "A cozy deciduous tree with a rounded fluffy canopy, warm autumn-green leaves,\ntextured brown bark trunk, pixel art, Stardew Valley style, cottagecore color\npalette, low detail, clean simple outlines, flat lighting, no drop shadow, no\nembossing, casts a soft simple shadow blob at the base only, top-down 3/4\nperspective, plain transparent background",
+      "metadata": {
+        "generatedAt": "2026-09-30T07:02:03.267Z"
+      },
+      "isProgress": false
+    },
+    {
+      "id": "242b9819-12c5-40fe-a914-0b42b11a3619",
+      "name": "bridge2 (Copy)",
+      "filename": "242b9819-12c5-40fe-a914-0b42b11a3619.png",
+      "boundingBox": {
+        "x": 138,
+        "y": 809,
+        "width": 76,
+        "height": 95
+      },
+      "groundBounds": {
+        "x": 160.0,
+        "y": 880.0,
+        "width": 32.0,
+        "height": 24.0
+      },
+      "layer": 3,
+      "visible": true,
+      "locked": false,
+      "description": "A cozy deciduous tree with a rounded fluffy canopy, warm autumn-green leaves,\ntextured brown bark trunk, pixel art, Stardew Valley style, cottagecore color\npalette, low detail, clean simple outlines, flat lighting, no drop shadow, no\nembossing, casts a soft simple shadow blob at the base only, top-down 3/4\nperspective, plain transparent background",
+      "metadata": {
+        "generatedAt": "2026-09-30T07:03:31.538Z",
+        "duplicatedFromObjectId": "83200cd4-c917-4946-ba17-5b7f92ce3711"
+      },
+      "isProgress": false
+    },
+    {
+      "id": "b17a64b5-d81c-4791-9816-1cd19b0cece1",
+      "name": "bridge2 (Copy 2)",
+      "filename": "b17a64b5-d81c-4791-9816-1cd19b0cece1.png",
+      "boundingBox": {
+        "x": -40,
+        "y": 756,
+        "width": 76,
+        "height": 95
+      },
+      "groundBounds": {
+        "x": -18.0,
+        "y": 827.0,
+        "width": 32.0,
+        "height": 24.0
+      },
+      "layer": 3,
+      "visible": true,
+      "locked": false,
+      "description": "A cozy deciduous tree with a rounded fluffy canopy, warm autumn-green leaves,\ntextured brown bark trunk, pixel art, Stardew Valley style, cottagecore color\npalette, low detail, clean simple outlines, flat lighting, no drop shadow, no\nembossing, casts a soft simple shadow blob at the base only, top-down 3/4\nperspective, plain transparent background",
+      "metadata": {
+        "generatedAt": "2026-09-30T07:08:14.674Z",
+        "duplicatedFromObjectId": "83200cd4-c917-4946-ba17-5b7f92ce3711"
+      },
+      "isProgress": false
+    }
+  ]
+}

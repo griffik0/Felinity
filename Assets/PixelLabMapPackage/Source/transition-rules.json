@@ -1,0 +1,36 @@
+{
+  "transitions": [
+    {
+      "from": "highly textured worn dirt path with dense packed earth, tiny embedded pebbles, and rich tonal variations showing deep earthen hollows and sun-baked highlights",
+      "to": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "fromId": 3,
+      "toId": 2,
+      "tilesetId": "f573c9ad-465a-4a51-a9fe-e8953d28838d",
+      "transitionSize": 0.25
+    },
+    {
+      "from": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shimmering subsurface currents beneath deep cast shadows and bright sunlit crests",
+      "to": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "fromId": 1,
+      "toId": 2,
+      "tilesetId": "6c15ec54-64ee-46d6-9fbc-d8897490c7de",
+      "transitionSize": 0.25
+    },
+    {
+      "from": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small pebble clusters in layered earthy browns featuring deep crevices and bright dry spots",
+      "to": "lush high-density green turf featuring complex blade-by-blade texture, rich color variation, deep shadowed undergrowth, and crisp sunlit tips across flat terrain",
+      "fromId": 4,
+      "toId": 2,
+      "tilesetId": "158735e8-d485-40ba-b250-8497f4cd1ad7",
+      "transitionSize": 0.25
+    },
+    {
+      "from": "calm deep blue-green pond water with intricate micro-ripples, layered tonal depth, and shimmering subsurface currents beneath deep cast shadows and bright sunlit crests",
+      "to": "heavily worn dirt path with dense packed earth texture, fine sandy grit, and embedded small pebble clusters in layered earthy browns featuring deep crevices and bright dry spots",
+      "fromId": 1,
+      "toId": 4,
+      "tilesetId": "93327815-5451-44b5-8530-269f933c94ec",
+      "transitionSize": 0.25
+    }
+  ]
+}
